@@ -1,6 +1,6 @@
 export const portfolioData = {
-  name: "Your Name",
-  title: "Full Stack Developer",
+  name: "Kusal Waidyanayake",
+  title: "Full Stack Developer & AI/ML Enthusiast",
   bio: "Passionate developer with experience in modern web technologies.",
   skills: ["React", "JavaScript", "Node.js", "Python", "CSS", "Git"],
   projects: [
