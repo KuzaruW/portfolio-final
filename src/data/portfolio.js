@@ -1,14 +1,31 @@
+import profilePic from './images/me.jpg'
+import avatarPic from './images/ai_me.png'
+import track01 from './music/track1.mp3'
+import track02 from './music/track2.mp3'
+import track03 from './music/track3.mp3'
+import track04 from './music/track4.mp3'
+import track05 from './music/track5.mp3'
+import Img01 from './images/track1.png'
+import Img02 from './images/track2.png'
+import Img03 from './images/track3.png'
+import Img04 from './images/track4.png'
+import Img05 from './images/track5.png'
+import CV from './documents/CV.pdf'
+import logo from './images/logo.svg'
+
+
+
 // portfolio.js - Centralized portfolio data
 export const portfolioData = {
   // Personal Information
   personal: {
     name: "Kusal Waidyanayake",
-    title: "Full Stack Developer",
+    title: "Full Stack Developer | AI & ML Enthusiat",
     subtitle: "Passionate about creating digital solutions",
     location: "Remote / Global",
     timezone: "EST",
-    avatar: "/path/to/your/avatar.jpg",
-    resume: "/path/to/resume.pdf",
+    avatar: avatarPic,
+    resume: CV,
     bio: {
       short: "I'm a passionate full-stack developer with 3+ years of experience building modern web applications.",
       detailed: "I started my journey in web development 3 years ago, driven by curiosity and a passion for creating digital solutions. What began as a hobby quickly evolved into a career as I discovered the power of code to solve real-world problems.",
@@ -20,18 +37,19 @@ export const portfolioData = {
       workingHours: "9:00 AM - 6:00 PM EST",
       responseTime: "24 hours",
       weekendAvailability: "Limited"
-    }
+    },
+    profileImage: profilePic,
   },
 
-  profileImage: './images/me.jpg',
+  logo : logo,
 
   // Contact Information
   contact: {
-    email: "your.email@example.com",
-    phone: "+1 (555) 123-4567",
+    email: "kusal.waidy@gmail.com",
+    phone: "+94 70 6010 770",
     location: "Remote / Global",
-    github: "https://github.com/yourusername",
-    linkedin: "https://linkedin.com/in/yourprofile",
+    github: "https://github.com/KuzaruW",
+    linkedin: "www.linkedin.com/in/kusal-828447223",
     twitter: "https://twitter.com/yourusername",
     website: "https://yourwebsite.com",
     calendly: "https://calendly.com/yourusername"
@@ -418,6 +436,55 @@ export const portfolioData = {
       followers: "600"
     }
   },
+
+  // Background Music Playlist
+  playlist: [
+    {
+      id: 1,
+      name: "Gypsy",
+      artist: "Orca Vibes",
+      src: track01,
+      cover: Img01,
+      duration: "01:47",
+      genre: "Lo-Fi"
+    },
+    {
+      id: 2,
+      name: "In Dreamland",
+      artist: "Chillpeach",
+      src: track02,
+      cover: Img02,
+      duration: "03:06",
+      genre: "Lo-Fi"
+    },
+    {
+      id: 3,
+      name: "2:00 AM",
+      artist: "Chillpeach",
+      src: track03,
+      cover: Img03,
+      duration: "02:28",
+      genre: "Lo-Fi"
+    },
+    {
+      id: 4,
+      name: "Taikyai",
+      artist: "Chillpeach",
+      src: track04,
+      cover: Img04,
+      duration: "02:30",
+      genre: "Lo-Fi"
+    },
+    {
+      id: 5,
+      name: "Purple",
+      artist: "Chillpeach",
+      src: track05,
+      cover: Img05,
+      duration: "02:41",
+      genre: "Lo-Fi"
+    }
+  ],
 
   // Meta Information for SEO
   meta: {

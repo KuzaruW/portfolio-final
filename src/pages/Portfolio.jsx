@@ -14,8 +14,16 @@ import Footer from '../components/home/Footer.jsx';
 const Portfolio = ({ onSwitchView }) => {
   const [currentPage, setCurrentPage] = useState('home');
   const [isTerminalVisible, setIsTerminalVisible] = useState(false);
-  
-  // Use existing dark mode context
+  const [musicPlayerState, setMusicPlayerState] = useState({
+    isOpen: false,
+    isPlaying: false,
+    currentTrack: null,
+    currentTrackIndex: 0,
+    currentTime: 0,
+    duration: 0,
+    volume: 0.3
+  });
+
   const { isDark, toggleDarkMode } = useDarkMode();
 
   const renderCurrentPage = () => {
@@ -71,7 +79,7 @@ const Portfolio = ({ onSwitchView }) => {
       <div className="background-effects">
         {isDark ? <ShootingStarsBackground /> : <FloatingParticlesBackground />}
       </div>
-      
+            
       {/* Header */}
       <Navbar
         onSwitchView={onSwitchView}
@@ -79,6 +87,7 @@ const Portfolio = ({ onSwitchView }) => {
         onNavigate={setCurrentPage}
         isTerminalVisible={isTerminalVisible}
         onToggleTerminal={handleTerminalToggle}
+        onMusicStateChange={setMusicPlayerState} 
       />
 
       {/* Main Content */}
@@ -94,6 +103,7 @@ const Portfolio = ({ onSwitchView }) => {
         onToggle={handleTerminalToggle}
         isDarkMode={isDark}
         onToggleTheme={toggleDarkMode}
+        musicPlayerState={musicPlayerState} 
       />
 
       <Footer/>

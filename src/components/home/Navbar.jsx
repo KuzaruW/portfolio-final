@@ -3,18 +3,19 @@ import { Moon, Sun, Download, Menu, X, Music } from 'lucide-react';
 import { portfolioData } from '../../data/portfolio.js';
 import { useDarkMode } from '../../utils/DarkModeContext.jsx';
 import ViewToggle from '../terminal/ViewToggle.jsx';
-import MusicPlayer from '../musicPlayer/musicPlayer.jsx'; // Add this import
+import MusicPlayer from '../musicPlayer/musicPlayer.jsx';
 
 const Navbar = ({ 
   onSwitchView, 
   currentPage, 
   onNavigate,
   isTerminalVisible,
-  onToggleTerminal
+  onToggleTerminal,
+  onMusicStateChange // Add this prop to receive state change handler
 }) => {
   const { isDark, toggleDarkMode } = useDarkMode();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMusicPlayerOpen, setIsMusicPlayerOpen] = useState(false); // Add this state
+  const [isMusicPlayerOpen, setIsMusicPlayerOpen] = useState(false);
 
   const navItems = [
     { id: 'home', label: 'Home' },
@@ -43,9 +44,28 @@ const Navbar = ({
     setIsMobileMenuOpen(false);
   };
 
-  // Add music player toggle handler
   const toggleMusicPlayer = () => {
-    setIsMusicPlayerOpen(!isMusicPlayerOpen);
+    const newState = !isMusicPlayerOpen;
+    setIsMusicPlayerOpen(newState);
+    
+    // Update music state in parent component
+    if (onMusicStateChange) {
+      onMusicStateChange(prevState => ({
+        ...prevState,
+        isOpen: newState
+      }));
+    }
+  };
+
+  // Function to handle music state updates from MusicPlayer
+  const handleMusicStateUpdate = (newState) => {
+    if (onMusicStateChange) {
+      onMusicStateChange(prevState => ({
+        ...prevState,
+        ...newState,
+        isOpen: isMusicPlayerOpen
+      }));
+    }
   };
 
   return (
@@ -107,7 +127,7 @@ const Navbar = ({
                 Resume
               </button>
 
-              {/* Music Player Toggle - ADD THIS */}
+              {/* Music Player Toggle */}
               <button
                 type="button"
                 onClick={toggleMusicPlayer}
@@ -146,9 +166,9 @@ const Navbar = ({
               />
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Buttons */}
             <div className="flex items-center space-x-2 lg:hidden">
-              {/* Mobile Music Player Toggle - ADD THIS */}
+              {/* Mobile Music Player Toggle */}
               <button
                 type="button"
                 onClick={toggleMusicPlayer}
@@ -162,6 +182,20 @@ const Navbar = ({
                     ? 'text-purple-600 dark:text-purple-400 animate-pulse' 
                     : 'text-gray-600 dark:text-gray-400'
                 }`} />
+              </button>
+
+              {/* Mobile Theme Toggle */}
+              <button
+                type="button"
+                onClick={toggleDarkMode}
+                className="theme-toggle p-2 rounded-lg glass-effect btn-hover-effect"
+                title="Toggle theme"
+              >
+                {isDark ? (
+                  <Sun className="w-5 h-5 text-yellow-500 animate-rotate" style={{ animationDuration: '3s' }} />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-600 animate-float" />
+                )}
               </button>
 
               {/* Mobile Menu Toggle */}
@@ -180,100 +214,83 @@ const Navbar = ({
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Music Player Component - ADD THIS */}
-      <MusicPlayer 
-        isOpen={isMusicPlayerOpen}
-        onToggle={toggleMusicPlayer}
-        audioSrc="/assets/bgm.mp3" // Update this path to your music file
-      />
-
-      {/* Mobile Menu Overlay */}
-      <div className={`lg:hidden fixed inset-0 z-40 transition-all duration-300 ${
-        isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-      }`}>
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={toggleMobileMenu}></div>
-        
-        {/* Mobile Menu Panel */}
-        <div className={`absolute top-0 right-0 h-full w-80 max-w-[80vw] glass-effect border-l border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ${
-          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        {/* Mobile Menu - Positioned directly under navbar */}
+        <div className={`lg:hidden absolute left-0 right-0 top-full z-40 transition-all duration-300 ${
+          isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
         }`}>
-          <div className="p-6">
-            {/* Mobile Menu Header */}
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">
-                    {portfolioData.personal.name.charAt(0)}
-                  </span>
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                    {portfolioData.personal.name}
-                  </h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{portfolioData.personal.title}</p>
-                </div>
-              </div>
-              <button
-                onClick={toggleMobileMenu}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-              >
-                <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </button>
-            </div>
+          {/* Mobile Menu Panel */}
+          <div className="glass-effect border-t border-gray-200 dark:border-gray-700 shadow-lg">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+              {/* Mobile Navigation Links */}
+              <nav className="space-y-2 mb-6">
+                {navItems.map((item, index) => (
+                  <button
+                    key={item.id}
+                    onClick={() => handleMobileNavigation(item.id)}
+                    className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-200 animate-stagger ${
+                      currentPage === item.id
+                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </nav>
 
-            {/* Mobile Navigation Links */}
-            <nav className="space-y-2 mb-8">
-              {navItems.map((item, index) => (
+              {/* Mobile Action Buttons */}
+              <div className="space-y-3">
+                {/* Download Resume Button */}
                 <button
-                  key={item.id}
-                  onClick={() => handleMobileNavigation(item.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-200 animate-stagger ${
-                    currentPage === item.id
-                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                  }`}
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                  onClick={() => {
+                    handleDownloadResume();
+                    toggleMobileMenu();
+                  }}
+                  className="w-full btn-hover-effect flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium"
                 >
-                  {item.label}
+                  <Download className="w-4 h-4 animate-float" />
+                  Download Resume
                 </button>
-              ))}
-            </nav>
 
-            {/* Mobile Action Buttons */}
-            <div className="space-y-3">
-              <button
-                onClick={() => {
-                  handleDownloadResume();
-                  toggleMobileMenu();
-                }}
-                className="w-full btn-hover-effect flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium"
-              >
-                <Download className="w-4 h-4 animate-float" />
-                Download Resume
-              </button>
-
-              <div className="flex space-x-3">
-                <ViewToggle 
-                  currentView="portfolio" 
-                  onSwitchView={onSwitchView}
-                  isTerminalVisible={isTerminalVisible}
-                  onToggleTerminal={onToggleTerminal}
-                  className="flex-1"
-                />
+                {/* Terminal Toggle */}
+                <div className="flex justify-center">
+                  <ViewToggle 
+                    currentView="portfolio" 
+                    onSwitchView={onSwitchView}
+                    isTerminalVisible={isTerminalVisible}
+                    onToggleTerminal={onToggleTerminal}
+                    className="w-full"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Mobile Footer */}
-            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                © 2024 {portfolioData.personal.name}
-              </p>
+              {/* Mobile Footer */}
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                  © 2025 {portfolioData.personal.name}
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </header>
+
+      {/* Music Player Component */}
+      <MusicPlayer 
+        isOpen={isMusicPlayerOpen}
+        onToggle={toggleMusicPlayer}
+        onStateChange={handleMusicStateUpdate} // Pass state change handler
+      />
+
+      {/* Backdrop overlay for mobile menu */}
+      {isMobileMenuOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-30"
+          onClick={toggleMobileMenu}
+        />
+      )}
     </>
   );
 };

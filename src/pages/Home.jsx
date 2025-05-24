@@ -70,9 +70,6 @@ const HomePage = ({ onNavigate }) => {
     <div className="relative overflow-hidden">
       {/* Enhanced Parallax background elements */}
       <div className="background-effects">
-        {/* Animated background grid */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
-        
         {/* Floating geometric shapes */}
         <div className="parallax-element floating-element absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl"></div>
         <div className="parallax-element floating-element absolute top-3/4 right-1/4 w-48 h-48 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-3xl"></div>
@@ -95,7 +92,7 @@ const HomePage = ({ onNavigate }) => {
           }}
         />
         <div 
-          className="absolute w-3 h-3 bg-pink-400/30 rounded-full animate-float"
+          className="absolute w-3 h-3 bg-pink-400/30 rounded-full"
           style={{
             left: `${80 + Math.sin(scrollY * 0.005) * 10}%`,
             bottom: `${30 + Math.cos(scrollY * 0.005) * 10}%`
@@ -103,63 +100,46 @@ const HomePage = ({ onNavigate }) => {
         />
       </div>
 
-      {/* Main content with enhanced animations */}
+      {/* Main content with reduced spacing */}
       <div className="page-content">
         <div 
           id="hero" 
           data-animate 
-          className={`section-reveal stagger-delay-1 ${isVisible.hero ? 'visible' : ''}`}
+          className={`transition-all duration-1000 ${isVisible.hero ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'}`}
         >
           <HeroSection onNavigate={onNavigate} />
         </div>
 
-        <div className="section-transition"></div>
-
         <div 
           id="about" 
           data-animate 
-          className={`section-reveal stagger-delay-2 ${isVisible.about ? 'visible' : ''}`}
+          className={`transition-all duration-1000 -mt-12 ${isVisible.about ? 'opacity-100 translate-y-0' : 'opacity-90 translate-y-4'}`}
         >
           <AboutSection onNavigate={onNavigate} />
         </div>
 
-        <div className="section-transition"></div>
-
         <div 
           id="experience" 
           data-animate 
-          className={`section-reveal stagger-delay-3 ${isVisible.experience ? 'visible' : ''}`}
+          className={`transition-all duration-1000 -mt-8 ${isVisible.experience ? 'opacity-100 translate-y-0' : 'opacity-90 translate-y-4'}`}
         >
           <ExperienceEducation />
         </div>
 
-        <div className="section-transition"></div>
-
         <div 
           id="tech" 
           data-animate 
-          className={`section-reveal stagger-delay-4 ${isVisible.tech ? 'visible' : ''}`}
+          className={`transition-all duration-1000 -mt-8 ${isVisible.tech ? 'opacity-100 translate-y-0' : 'opacity-90 translate-y-4'}`}
         >
           <TechStack />
         </div>
 
-        <div className="section-transition"></div>
-
         <div 
           id="projects" 
           data-animate 
-          className={`section-reveal stagger-delay-5 ${isVisible.projects ? 'visible' : ''}`}
+          className={`transition-all duration-1000 -mt-8 ${isVisible.projects ? 'opacity-100 translate-y-0' : 'opacity-90 translate-y-4'}`}
         >
           <FeaturedProjects onNavigate={onNavigate} />
-        </div>
-
-        <div className="section-transition"></div>
-
-        <div 
-          id="footer" 
-          data-animate 
-          className={`section-reveal stagger-delay-5 ${isVisible.footer ? 'visible' : ''}`}
-        >
         </div>
       </div>
 
@@ -168,12 +148,12 @@ const HomePage = ({ onNavigate }) => {
         {/* Scroll to top button */}
         <button
           onClick={scrollToTop}
-          className={`w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg btn-hover-effect glow-on-hover transition-all duration-500 ${
+          className={`w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-500 ${
             showScrollTop ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'
           }`}
           title="Scroll to top"
         >
-          <ArrowUp className="w-6 h-6 mx-auto animate-float" />
+          <ArrowUp className="w-6 h-6 mx-auto" />
         </button>
 
         {/* Decorative floating elements */}
@@ -218,12 +198,13 @@ const HomePage = ({ onNavigate }) => {
         {[...Array(3)].map((_, i) => (
           <div
             key={`heart-${i}`}
-            className="absolute animate-float"
+            className="absolute"
             style={{
               right: `${5 + i * 20}%`,
               top: `${30 + i * 20}%`,
               animationDelay: `${i * 1}s`,
-              animationDuration: `${3 + i * 0.5}s`
+              animationDuration: `${3 + i * 0.5}s`,
+              transform: `translateY(${Math.sin(scrollY * 0.005 + i) * 10}px)`
             }}
           >
             <Heart 

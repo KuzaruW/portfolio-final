@@ -21,6 +21,7 @@ export const commands = {
 │  • showSkills  - Show technical skills                  │
 │  • experience  - Show work experience                   │
 │  • date        - Show current date                      │
+│  • music       - Show current music status              │
 │                                                         │
 │  Fun Commands:                                          │
 │  • matrix      - Enter the matrix...                    │
@@ -66,11 +67,11 @@ Uptime: ${Math.floor(Math.random() * 24)}h ${Math.floor(Math.random() * 60)}m`,
   matrix: () => `Wake up, Neo... 🕶️
 The Matrix has you...
 Follow the white rabbit 🐰
-┌─────────────────────────────────────┐
+┌─────────────────────────────────────────────────────────┐
 │ 01001000 01100101 01101100 01101100 │
 │ 01101111 00100000 01010111 01101111 │
 │ 01110010 01101100 01100100 00100001 │
-└─────────────────────────────────────┘
+└─────────────────────────────────────────────────────────┘
 Knock, knock, Neo.`,
 
   joke: () => {
@@ -84,13 +85,15 @@ Knock, knock, Neo.`,
     return jokes[Math.floor(Math.random() * jokes.length)];
   },
 
+  // Dynamic music command - will be overridden by Terminal component
+  music: () => `🎵 Music Player Status:
+No music is currently playing.
+Open the music player from the navbar to start listening! 🎶`,
+
   // Easter eggs
   coffee: () => `☕ Brewing fresh coffee... 
 ████████████████ 100%
 Coffee ready! Perfect for coding sessions.`,
-
-  music: () => `🎵 Now playing: "Coding in the Deep" by The Debug Brothers
-♪ ♫ ♪ ♫ Debugging all night long ♪ ♫ ♪ ♫`,
 
   // Hidden commands
   konami: () => `🎮 KONAMI CODE ACTIVATED!

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, GraduationCap, Briefcase } from 'lucide-react';
+import { Calendar, GraduationCap, Briefcase, ChevronRight } from 'lucide-react';
 import { portfolioData } from '../../data/portfolio.js';
 
 const ExperienceEducation = () => {
@@ -133,6 +133,19 @@ const ExperienceEducation = () => {
               ))}
             </div>
           </div>
+        </div>
+      </div>
+      <div>
+        <div className={`text-center section-reveal ${isVisible ? 'visible' : ''}`} style={{ transitionDelay: '0.6s' }}>
+          <button
+            onClick={() => onNavigate('skills')}
+            className="btn-hover-effect inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold relative overflow-hidden"
+          >
+            <span className="relative z-10 flex items-center">
+              My Skills
+              <ChevronRight className="w-5 h-5 ml-2 animate-float" />
+            </span>
+          </button>
         </div>
       </div>
     </section>

@@ -44,82 +44,61 @@ const HeroSection = ({ onNavigate }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const ProfileImageComponent = ({ className = "" }) => (
-    <div className={`flex justify-center ${className}`}>
-      <div className="relative">
-        {/* Profile image container with responsive sizing */}
-        <div className="relative z-10 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px] rounded-full overflow-hidden glass-effect">
-          {/* Check if profile image exists in portfolio data */}
-          {portfolioData.personal.avatar ? (
-            <>
-              {/* Subtle inner effects */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-100/5 via-transparent to-purple-100/5 dark:from-blue-400/5 dark:via-transparent dark:to-purple-400/5 rounded-full"></div>
-              <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/5 to-transparent dark:from-transparent dark:via-white/3 dark:to-transparent rounded-full"></div>
-              
+  const ProfileImage = () => {
+    // Use profileImage instead of avatar to match your portfolio data structure
+    const imageSrc = portfolioData.personal.avatar || portfolioData.personal.avatar;
+    
+    return (
+      <div className="flex justify-center">
+        <div className="relative">
+          <div className="relative z-10 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px] rounded-full overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 shadow-2xl">
+            {imageSrc ? (
               <img 
-                src={portfolioData.personal.avatar}
+                src={imageSrc}
                 alt={portfolioData.personal.name}
-                className="w-full h-full object-cover object-center card-hover rounded-full"
+                className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
                 onError={(e) => {
-                  console.error('Failed to load profile image:', portfolioData.personal.avatar);
+                  console.error('Failed to load profile image:', imageSrc);
+                  // Hide image and show fallback
                   e.target.style.display = 'none';
                   e.target.nextElementSibling.style.display = 'flex';
                 }}
               />
-              {/* Fallback if image fails to load */}
-              <div className="hidden absolute inset-0 bg-gradient-to-br from-blue-500/60 to-purple-600/60 backdrop-blur-sm items-center justify-center rounded-full">
-                <span className="text-4xl sm:text-6xl md:text-8xl font-bold text-white">
-                  {portfolioData.personal.name.charAt(0)}
-                </span>
-              </div>
-            </>
-          ) : (
-            /* Fallback if no image provided */
-            <div className="relative z-10 w-full h-full rounded-full bg-gradient-to-br from-blue-500/60 to-purple-600/60 backdrop-blur-sm flex items-center justify-center">
+            ) : null}
+            
+            {/* Fallback - shows if no image or image fails */}
+            <div className={`${imageSrc ? 'hidden' : 'flex'} absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 items-center justify-center rounded-full`}>
               <span className="text-4xl sm:text-6xl md:text-8xl font-bold text-white">
                 {portfolioData.personal.name.charAt(0)}
               </span>
             </div>
-          )}
+          </div>
         </div>
-        
-        {/* Ultra-subtle floating elements */}
-        <div className="absolute -top-8 lg:-top-12 -right-8 lg:-right-12 w-2 h-2 bg-blue-300/30 dark:bg-blue-400/30 rounded-full animate-float blur-sm"></div>
-        <div className="absolute -bottom-12 lg:-bottom-16 -left-12 lg:-left-16 w-1.5 h-1.5 bg-cyan-300/30 dark:bg-cyan-400/30 rounded-full animate-float blur-sm" style={{ animationDelay: '0.5s' }}></div>
-        <div className="absolute top-1/4 -left-12 lg:-left-20 w-1 h-1 bg-purple-300/30 dark:bg-purple-400/30 rounded-full animate-float blur-sm" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-1/4 -right-12 lg:-right-20 w-1.5 h-1.5 bg-pink-300/30 dark:bg-pink-400/30 rounded-full animate-float blur-sm" style={{ animationDelay: '1.5s' }}></div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 relative">
-      <div className="max-w-7xl mx-auto w-full page-content">
-        {/* Mobile Layout: Image first, then content */}
+      <div className="max-w-7xl mx-auto w-full">
+        
+        {/* Mobile Layout */}
         <div className="flex flex-col lg:hidden items-center space-y-8">
-          
-          {/* Profile Image - Mobile */}
-          <ProfileImageComponent 
-            className={`section-reveal ${isVisible ? 'visible' : ''}`}
-            style={{ transitionDelay: '0.3s' }}
-          />
+          <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <ProfileImage />
+          </div>
 
-          {/* Content - Mobile */}
-          <div className={`text-center section-reveal ${isVisible ? 'visible' : ''}`}>
-            
-            {/* Main Heading */}
-            <h1 className="page-title gradient-text-safe bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200">
+          <div className={`text-center transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4">
               {portfolioData.personal.name}
             </h1>
 
-            {/* Role */}
             <h2 className="text-xl sm:text-2xl md:text-3xl text-gray-600 dark:text-gray-300 font-light mb-6">
               {portfolioData.personal.title}
             </h2>
 
-            {/* Animated Quote */}
             <div className="h-12 sm:h-16 mb-8">
-              <p className="text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 italic max-w-3xl mx-auto leading-relaxed animate-fade-in">
+              <p className="text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 italic max-w-3xl mx-auto leading-relaxed">
                 "{quotes[currentQuote]}"
               </p>
             </div>
@@ -134,11 +113,10 @@ const HeroSection = ({ onNavigate }) => {
                     href={social.href}
                     target={social.href.startsWith('http') ? '_blank' : '_self'}
                     rel={social.href.startsWith('http') ? 'noopener noreferrer' : ''}
-                    className={`p-3 sm:p-4 glass-effect rounded-full text-gray-600 dark:text-gray-400 ${social.color} btn-hover-effect animate-stagger`}
+                    className={`p-3 sm:p-4 bg-white/10 backdrop-blur-sm rounded-full text-gray-600 dark:text-gray-400 ${social.color} hover:scale-110 transition-all duration-300`}
                     title={social.label}
-                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
+                    <IconComponent className="w-5 h-5 sm:w-6 sm:h-6" />
                   </a>
                 );
               })}
@@ -148,48 +126,45 @@ const HeroSection = ({ onNavigate }) => {
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
               <button
                 onClick={() => onNavigate('contact')}
-                className="btn-hover-effect inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold w-full sm:w-auto"
+                className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300 w-full sm:w-auto"
               >
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-float" />
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Let's work together
               </button>
               
               <button
                 onClick={() => onNavigate('projects')}
-                className="btn-hover-effect inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 glass-effect text-gray-700 dark:text-gray-300 rounded-xl font-semibold w-full sm:w-auto"
+                className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-white/10 backdrop-blur-sm text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:scale-105 transition-all duration-300 w-full sm:w-auto"
               >
-                <Monitor className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-float" />
+                <Monitor className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 View My Work
               </button>
             </div>
           </div>
         </div>
 
-        {/* Desktop Layout: Side by side */}
+        {/* Desktop Layout */}
         <div className="hidden lg:grid lg:grid-cols-2 gap-16 items-center">
           
-          {/* Left Content - Desktop */}
-          <div className={`text-center lg:text-left section-reveal ${isVisible ? 'visible' : ''}`}>
+          {/* Left Content */}
+          <div className={`text-left transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
             
-            {/* Main Heading */}
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold gradient-text-safe bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 mb-6 leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-6 leading-tight">
               {portfolioData.personal.name}
             </h1>
 
-            {/* Role */}
             <h2 className="text-2xl md:text-3xl lg:text-4xl text-gray-600 dark:text-gray-300 font-light mb-8">
               {portfolioData.personal.title}
             </h2>
 
-            {/* Animated Quote */}
             <div className="h-16 mb-12">
-              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 italic max-w-3xl mx-auto lg:mx-0 leading-relaxed animate-fade-in">
+              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 italic max-w-3xl leading-relaxed">
                 "{quotes[currentQuote]}"
               </p>
             </div>
 
             {/* Social Links */}
-            <div className="flex justify-center lg:justify-start gap-6 mb-16">
+            <div className="flex gap-6 mb-16">
               {socialLinks.map((social, index) => {
                 const IconComponent = social.icon;
                 return (
@@ -198,41 +173,39 @@ const HeroSection = ({ onNavigate }) => {
                     href={social.href}
                     target={social.href.startsWith('http') ? '_blank' : '_self'}
                     rel={social.href.startsWith('http') ? 'noopener noreferrer' : ''}
-                    className={`p-4 glass-effect rounded-full text-gray-600 dark:text-gray-400 ${social.color} btn-hover-effect animate-stagger glow-on-hover`}
+                    className={`p-4 bg-white/10 backdrop-blur-sm rounded-full text-gray-600 dark:text-gray-400 ${social.color} hover:scale-110 transition-all duration-300`}
                     title={social.label}
-                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <IconComponent className="w-6 h-6 animate-pulse" />
+                    <IconComponent className="w-6 h-6" />
                   </a>
                 );
               })}
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4">
+            <div className="flex gap-4">
               <button
                 onClick={() => onNavigate('contact')}
-                className="btn-hover-effect inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold"
+                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300"
               >
-                <Mail className="w-5 h-5 mr-2 animate-float" />
+                <Mail className="w-5 h-5 mr-2" />
                 Let's work together
               </button>
               
               <button
                 onClick={() => onNavigate('projects')}
-                className="btn-hover-effect inline-flex items-center px-8 py-4 glass-effect text-gray-700 dark:text-gray-300 rounded-xl font-semibold"
+                className="inline-flex items-center px-8 py-4 bg-white/10 backdrop-blur-sm text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:scale-105 transition-all duration-300"
               >
-                <Monitor className="w-5 h-5 mr-2 animate-float" />
+                <Monitor className="w-5 h-5 mr-2" />
                 View My Work
               </button>
             </div>
           </div>
 
-          {/* Right Content - Profile Image Desktop */}
-          <ProfileImageComponent 
-            className={`section-reveal ${isVisible ? 'visible' : ''}`}
-            style={{ transitionDelay: '0.3s' }}
-          />
+          {/* Right Content - Profile Image */}
+          <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+            <ProfileImage />
+          </div>
         </div>
       </div>
     </section>

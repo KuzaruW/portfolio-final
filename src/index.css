@@ -120,6 +120,28 @@
   }
 }
 
+@keyframes iconGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.3));
+    opacity: 0.8;
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.7));
+    opacity: 1;
+  }
+}
+
+@keyframes iconGlowHover {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+    opacity: 0.9;
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.8));
+    opacity: 1;
+  }
+}
+
 @keyframes gradientShift {
   0%, 100% {
     background-position: 0% 50%;
@@ -191,30 +213,96 @@
   animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-/* Remove float animation from button icons */
-.btn-hover-effect .animate-float {
-  animation: none;
-}
+/* =================================== */
+/* DISABLE ALL UNWANTED MOVEMENT ANIMATIONS */
+/* =================================== */
 
-/* Keep float animation for other elements but not in buttons */
-.animate-float:not(.btn-hover-effect *) {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-/* Disable float animation for button icons specifically */
+/* DISABLE ALL BUTTON MOVEMENT ANIMATIONS - Replace with glow effects */
 button .animate-float,
 .btn-hover-effect .animate-float,
-a .animate-float {
-  animation: none;
+a .animate-float,
+button .animate-rotate,
+.btn-hover-effect .animate-rotate,
+a .animate-rotate {
+  animation: none !important;
+  transform: none !important;
 }
 
-/* Keep float animation for decorative elements only */
-.decorative-float {
+/* DISABLE EMOJI MOVEMENT - Stop all emojis from floating */
+/* Target emojis in any context and stop their movement */
+span:contains("🎵"),
+span:contains("♪"),
+span:contains("⏸"),
+span:contains("🔊"),
+span:contains("🔇"),
+*[class*="emoji"],
+.emoji,
+/* Common emoji patterns */
+*:before:contains("🎵"),
+*:after:contains("🎵"),
+*:before:contains("♪"),
+*:after:contains("♪") {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* More comprehensive emoji blocking */
+/* Block floating animations for any element containing emojis */
+*:has(span:contains("🎵")),
+*:has(span:contains("♪")),
+*:has(span:contains("⏸")),
+*:has(*[class*="emoji"]) {
+  animation: none !important;
+}
+
+/* Universal emoji float disable */
+/* This catches any text content with emojis */
+:is(span, div, p, h1, h2, h3, h4, h5, h6):not(.allow-float) {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Disable float animation for ANY text element that might contain emojis */
+.animate-float:is(span, div, p, text, [role="text"], [aria-label*="emoji"]) {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Add glow effects for button icons instead of movement */
+button .animate-float,
+.btn-hover-effect .animate-float {
+  animation: iconGlow 3s ease-in-out infinite;
+}
+
+button:hover .animate-float,
+.btn-hover-effect:hover .animate-float {
+  animation: iconGlowHover 2s ease-in-out infinite;
+}
+
+/* Special handling for theme toggle - glow instead of rotation */
+.theme-toggle .animate-rotate {
+  animation: iconGlow 3s ease-in-out infinite !important;
+  transform: none !important;
+}
+
+.theme-toggle:hover .animate-rotate {
+  animation: iconGlowHover 2s ease-in-out infinite !important;
+}
+
+/* VERY RESTRICTIVE: Only allow float animation for explicitly allowed decorative elements */
+.decorative-float:not(span):not([class*="text"]):not([role="text"]) {
   animation: float 6s ease-in-out infinite;
+}
+
+/* Allow float only for pure decorative elements (no text/emojis) */
+.animate-float.allow-float:not(span):not([class*="text"]):not([role="text"]) {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Disable float for everything else */
+.animate-float:not(.allow-float) {
+  animation: none !important;
+  transform: none !important;
 }
 
 .animate-sparkle {
@@ -233,7 +321,14 @@ a .animate-float {
   animation: gridMove 20s linear infinite;
 }
 
-.animate-rotate {
+/* DISABLE ROTATION for most elements, only allow for pure decorative non-text elements */
+.animate-rotate:not(.allow-rotate):not(button *):not(.btn-hover-effect *):not(a *):not(.theme-toggle *) {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Only allow rotation for explicitly marked decorative elements */
+.animate-rotate.allow-rotate:not(span):not([class*="text"]):not([role="text"]) {
   animation: rotate360 2s linear infinite;
 }
 
@@ -264,16 +359,22 @@ a .animate-float {
 .stagger-delay-4 { transition-delay: 0.4s; }
 .stagger-delay-5 { transition-delay: 0.5s; }
 
-/* Floating elements with different delays */
+/* DISABLE floating elements with different delays */
 .floating-element {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Only allow for pure decorative elements */
+.floating-element.allow-float:not(span):not([class*="text"]):not([role="text"]) {
   animation: float 6s ease-in-out infinite;
 }
 
-.floating-element:nth-child(2) {
+.floating-element.allow-float:nth-child(2) {
   animation-delay: -2s;
 }
 
-.floating-element:nth-child(3) {
+.floating-element.allow-float:nth-child(3) {
   animation-delay: -4s;
 }
 
@@ -504,7 +605,7 @@ a .animate-float {
   animation: sparkle 1.5s ease-out forwards;
 }
 
-/* Button hover effects */
+/* Button hover effects - NO ROTATION OR MOVEMENT */
 .btn-hover-effect {
   position: relative;
   overflow: hidden;
@@ -526,19 +627,10 @@ a .animate-float {
   left: 100%;
 }
 
+/* Remove vertical movement from button hover, add glow instead */
 .btn-hover-effect:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* Remove float animation from button icons */
-.btn-hover-effect .animate-float {
-  animation: none;
-}
-
-/* Keep float animation for other elements but not in buttons */
-.animate-float:not(.btn-hover-effect *) {
-  animation: float 6s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4), 0 4px 15px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.1);
 }
 
 /* Form input effects */
@@ -661,13 +753,14 @@ html {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Theme toggle animation */
+/* DISABLE THEME TOGGLE ROTATION - Replace with glow */
 .theme-toggle {
-  transition: transform 0.3s ease;
+  transition: filter 0.3s ease, box-shadow 0.3s ease;
 }
 
 .theme-toggle:hover {
-  transform: rotate(180deg);
+  filter: brightness(1.2);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
 }
 
 /* =================================== */
@@ -796,13 +889,18 @@ html {
     margin-bottom: 3rem;
   }
   
-  /* Reduce animations on mobile for performance */
-  .animate-float {
-    animation: none;
+  /* Disable ALL animations on mobile for performance */
+  .animate-float,
+  .floating-element,
+  .parallax-element {
+    animation: none !important;
+    transform: none !important;
   }
   
-  .parallax-element {
-    transform: none !important;
+  /* Only keep glow effects for buttons on mobile */
+  button .animate-float,
+  .btn-hover-effect .animate-float {
+    animation: iconGlow 3s ease-in-out infinite;
   }
 }
 
@@ -860,14 +958,15 @@ html {
   width: 100%;
 }
 
-/* Project card enhancements */
+/* Project card enhancements - Remove rotation */
 .project-card {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-style: preserve-3d;
 }
 
 .project-card:hover {
-  transform: translateY(-10px) rotateX(5deg);
+  transform: translateY(-10px);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+  filter: brightness(1.05);
 }
 
 /* Testimonial card styles */

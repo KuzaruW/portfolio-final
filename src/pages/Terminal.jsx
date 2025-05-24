@@ -6,12 +6,14 @@ import TerminalInput from '../components/terminal/TerminalInput.jsx';
 import TerminalFooter from '../components/terminal/TerminalFooter.jsx';
 import { Terminal as TerminalIcon } from 'lucide-react';
 import { useDarkMode } from '../utils/DarkModeContext.jsx';
+import { portfolioData } from '../data/portfolio.js';
 
 const Terminal = ({ 
   onSwitchView, 
   onNavigate, 
   isVisible, 
   onToggle,
+  musicPlayerState, // Add this prop to receive music state
   ...otherProps
 }) => {
   const { isDark, toggleDarkMode } = useDarkMode();
@@ -29,6 +31,70 @@ const Terminal = ({
   const [isMinimized, setIsMinimized] = useState(false);
   const inputRef = useRef(null);
   const terminalRef = useRef(null);
+
+  // Create dynamic music command based on music player state
+  const createMusicCommand = () => {
+    if (!musicPlayerState || !musicPlayerState.isOpen) {
+      return () => `🎵 Music Player Status:
+╭─────────────────────────────────────────────────────────╮
+│  Status: Music player is closed                        │
+│  Action: Open the music player from the navbar! 🎶     │
+╰─────────────────────────────────────────────────────────╯`;
+    }
+
+    const { isPlaying, currentTrack, currentTime, duration, volume } = musicPlayerState;
+    const playlist = portfolioData.playlist || [];
+    
+    if (!isPlaying) {
+      // Truncate and pad track info for consistent formatting
+      const trackName = (currentTrack?.name || 'Unknown').substring(0, 25).padEnd(25);
+      const artistName = (currentTrack?.artist || 'Unknown Artist').substring(0, 20).padEnd(20);
+      
+      return () => `🎵 Music Player Status:
+╭─────────────────────────────────────────────────────────╮
+│  Status: Music player is open but paused ⏸️            │
+│  Track:  ${trackName}                   │
+│  Artist: ${artistName}                      │
+│  Volume: ${Math.round((volume || 0) * 100).toString().padStart(3)}%                                         │
+│  Action: Click play to start listening! 🎶             │
+╰─────────────────────────────────────────────────────────╯`;
+    }
+
+    const formatTime = (time) => {
+      if (isNaN(time)) return '0:00';
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    };
+
+    const progressBar = (current, total) => {
+      if (!total || total === 0) return '░░░░░░░░░░';
+      const progress = Math.floor((current / total) * 10);
+      return '█'.repeat(progress) + '░'.repeat(10 - progress);
+    };
+
+    // Truncate and pad text for consistent formatting
+    const trackName = (currentTrack?.name || 'Unknown Track').substring(0, 30).padEnd(30);
+    const artistName = (currentTrack?.artist || 'Unknown Artist').substring(0, 25).padEnd(25);
+    const genreName = (currentTrack?.genre || 'Unknown').substring(0, 20).padEnd(20);
+    const currentTimeStr = formatTime(currentTime || 0).padStart(5);
+    const durationStr = formatTime(duration || 0).padEnd(5);
+    const volumeStr = Math.round((volume || 0) * 100).toString().padStart(3);
+    const trackPosition = `${(musicPlayerState.currentTrackIndex || 0) + 1}/${playlist.length}`.padEnd(5);
+
+    return () => `🎵 Now Playing:
+╭─────────────────────────────────────────────────────────╮
+│  ♪ ${trackName}                          │
+│  🎤 Artist: ${artistName}                   │
+│  🎼 Genre:  ${genreName}                        │
+│                                                         │
+│  ⏱️  ${currentTimeStr} ${progressBar(currentTime || 0, duration || 0)} ${durationStr}              │
+│  🔊 Volume: ${volumeStr}%                                        │
+│  📀 Track:  ${trackPosition}                                     │
+│                                                         │
+│  Status: 🎵 Playing - Enjoy the music! 🎶             │
+╰─────────────────────────────────────────────────────────╯`;
+  };
 
   // Navigation commands that work with your Portfolio component
   const navigationCommands = {
@@ -68,7 +134,9 @@ const Terminal = ({
     changesize: () => {
       setIsMaximized(!isMaximized);
       return `${!isMaximized ? '⬆️ Terminal maximized' : '⬇️ Terminal restored'}`;
-    }
+    },
+    // Dynamic music command
+    music: createMusicCommand()
   };
 
   // Auto-scroll to bottom when new content is added
@@ -84,6 +152,11 @@ const Terminal = ({
       setTimeout(() => inputRef.current.focus(), 100);
     }
   }, [isVisible, isMinimized]);
+
+  // Update music command when music state changes
+  useEffect(() => {
+    navigationCommands.music = createMusicCommand();
+  }, [musicPlayerState]);
 
   // Focus input when terminal is clicked
   const handleTerminalClick = () => {
@@ -101,7 +174,7 @@ const Terminal = ({
       return;
     }
     
-    // Check navigation commands first
+    // Check navigation commands first (includes dynamic music command)
     if (navigationCommands[command]) {
       const output = navigationCommands[command]();
       newHistory.push(output, '');
@@ -109,8 +182,8 @@ const Terminal = ({
       return;
     }
     
-    // Then check your existing commands from commands.js
-    if (commands && commands[command]) {
+    // Then check your existing commands from commands.js (excluding music since it's overridden)
+    if (commands && commands[command] && command !== 'music') {
       const output = commands[command]();
       newHistory.push(output, '');
       setHistory(newHistory);
