@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
 
-const TerminalInput = ({ input, setInput, onExecuteCommand, inputRef }) => {
+const TerminalInput = ({ 
+  input, 
+  setInput, 
+  onExecuteCommand, 
+  inputRef, 
+  availableCommands,
+  ...otherProps // Capture any other props to prevent them from reaching DOM
+}) => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState(0);
 
-  const availableCommands = ['help', 'about', 'skills', 'projects', 'contact', 'clear', 'portfolio'];
+  // Default commands if not provided
+  const defaultCommands = [
+    'help', 'about', 'skills', 'projects', 'contact', 'clear', 'portfolio',
+    'home', 'theme', 'close', 'minimize', 'maximize'
+  ];
+  
+  const commands = availableCommands || defaultCommands;
 
   // Handle command suggestions
   useEffect(() => {
@@ -14,14 +27,14 @@ const TerminalInput = ({ input, setInput, onExecuteCommand, inputRef }) => {
       return;
     }
 
-    const filtered = availableCommands.filter(cmd => 
+    const filtered = commands.filter(cmd => 
       cmd.toLowerCase().startsWith(input.toLowerCase())
     );
 
     setSuggestions(filtered);
     setShowSuggestions(filtered.length > 0 && input.length > 0);
     setSelectedSuggestion(0);
-  }, [input]);
+  }, [input, commands]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -64,6 +77,14 @@ const TerminalInput = ({ input, setInput, onExecuteCommand, inputRef }) => {
     }
   };
 
+  const handleSuggestionClick = (suggestion) => {
+    setInput(suggestion);
+    setShowSuggestions(false);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   return (
     <div className="relative">
       {/* Command Suggestions */}
@@ -73,20 +94,15 @@ const TerminalInput = ({ input, setInput, onExecuteCommand, inputRef }) => {
             Suggestions (Tab to complete):
           </div>
           {suggestions.map((suggestion, index) => (
-            <div
+            <button
               key={suggestion}
-              className={`px-3 py-2 text-sm cursor-pointer transition-colors ${
+              type="button"
+              className={`w-full px-3 py-2 text-sm text-left cursor-pointer transition-colors ${
                 index === selectedSuggestion 
                   ? 'bg-blue-600 text-white' 
                   : 'text-gray-300 hover:bg-gray-700'
               }`}
-              onClick={() => {
-                setInput(suggestion);
-                setShowSuggestions(false);
-                if (inputRef.current) {
-                  inputRef.current.focus();
-                }
-              }}
+              onClick={() => handleSuggestionClick(suggestion)}
             >
               <div className="flex items-center justify-between">
                 <span className="font-mono">{suggestion}</span>
@@ -94,7 +110,7 @@ const TerminalInput = ({ input, setInput, onExecuteCommand, inputRef }) => {
                   <span className="text-xs opacity-75">↵</span>
                 )}
               </div>
-            </div>
+            </button>
           ))}
         </div>
       )}
@@ -123,7 +139,7 @@ const TerminalInput = ({ input, setInput, onExecuteCommand, inputRef }) => {
       {/* Command hint */}
       {input.trim() === '' && (
         <div className="mt-2 text-gray-500 text-xs">
-          💡 Try typing "help" to see available commands
+          💡 Try: "help" for commands, "home/about/projects/contact" for navigation, "theme" to toggle mode
         </div>
       )}
     </div>

@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import PortfolioHeader from '../components/portfolio/PortfolioHeader.jsx';
+import Navbar from '../components/home/Navbar.jsx';
+import Terminal from './Terminal.jsx';
 import HomePage from './Home.jsx';
 import AboutPage from './About.jsx';
 import ProjectsPage from './Projects.jsx';
 import ContactPage from './Contact.jsx';
+import ShootingStarsBackground from '../components/backgroundStyles/DarkModeBG.jsx';
+import FloatingParticlesBackground from '../components/backgroundStyles/LightModeBG.jsx';
+import { useDarkMode } from '../utils/DarkModeContext.jsx';
 
 const Portfolio = ({ onSwitchView }) => {
   const [currentPage, setCurrentPage] = useState('home');
+  const [isTerminalVisible, setIsTerminalVisible] = useState(false);
+  
+  // Use your existing dark mode context
+  const { isDark, toggleDarkMode } = useDarkMode();
 
   const renderCurrentPage = () => {
     switch (currentPage) {
@@ -23,26 +31,42 @@ const Portfolio = ({ onSwitchView }) => {
     }
   };
 
+  const handleTerminalToggle = () => {
+    setIsTerminalVisible(!isTerminalVisible);
+  };
+
+  const handleTerminalNavigate = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 transition-all duration-300">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Dynamic Background based on theme */}
+      {isDark ? <ShootingStarsBackground /> : <FloatingParticlesBackground />}
+      
       {/* Header */}
-      <PortfolioHeader 
-        onSwitchView={onSwitchView} 
+      <Navbar
+        onSwitchView={onSwitchView}
         currentPage={currentPage}
         onNavigate={setCurrentPage}
+        isTerminalVisible={isTerminalVisible}
+        onToggleTerminal={handleTerminalToggle}
       />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6">
+      <main className="relative z-10 max-w-7xl mx-auto px-6">
         {renderCurrentPage()}
       </main>
 
-      {/* Background Effects */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-3/4 right-1/4 w-48 h-48 bg-purple-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-1/4 left-1/2 w-32 h-32 bg-pink-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
-      </div>
+      {/* Terminal Overlay */}
+      <Terminal
+        onSwitchView={onSwitchView}
+        onNavigate={handleTerminalNavigate}
+        isVisible={isTerminalVisible}
+        onToggle={handleTerminalToggle}
+        isDarkMode={isDark}
+        onToggleTheme={toggleDarkMode}
+      />
     </div>
   );
 };

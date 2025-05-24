@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Terminal from './pages/Terminal.jsx';
 import Portfolio from './pages/Portfolio.jsx';
+import Home from './pages/Home.jsx'
 import { DarkModeProvider } from './utils/DarkModeContext.jsx';
 
 function App() {
@@ -8,7 +9,7 @@ function App() {
 
   return (
     <DarkModeProvider>
-      <div className="font-sans">
+      <div className="open-sans">
         {currentView === 'terminal' ? (
           <Terminal onSwitchView={setCurrentView} />
         ) : (

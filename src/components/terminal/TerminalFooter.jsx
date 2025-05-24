@@ -59,19 +59,6 @@ const TerminalFooter = () => {
           </div>
         </div>
       </div>
-
-      {/* Terminal Stats */}
-      <div className="mt-3 pt-3 border-t border-gray-900 grid grid-cols-3 gap-4 text-xs text-gray-600">
-        <div>
-          <span className="text-green-400">●</span> Commands: 7
-        </div>
-        <div>
-          <span className="text-blue-400">●</span> Memory: 2.4MB
-        </div>
-        <div>
-          <span className="text-purple-400">●</span> CPU: 0.1%
-        </div>
-      </div>
     </div>
   );
 };
