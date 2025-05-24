@@ -1,31 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/home/Navbar.jsx';
 import Terminal from './Terminal.jsx';
 import HomePage from './Home.jsx';
 import AboutPage from './About.jsx';
 import ProjectsPage from './Projects.jsx';
+import Skills from './Skills.jsx';
 import ContactPage from './Contact.jsx';
 import ShootingStarsBackground from '../components/backgroundStyles/DarkModeBG.jsx';
 import FloatingParticlesBackground from '../components/backgroundStyles/LightModeBG.jsx';
 import { useDarkMode } from '../utils/DarkModeContext.jsx';
+import Footer from '../components/home/Footer.jsx';
 
 const Portfolio = ({ onSwitchView }) => {
   const [currentPage, setCurrentPage] = useState('home');
   const [isTerminalVisible, setIsTerminalVisible] = useState(false);
   
-  // Use your existing dark mode context
+  // Use existing dark mode context
   const { isDark, toggleDarkMode } = useDarkMode();
 
   const renderCurrentPage = () => {
+    const pageProps = {
+      className: `fade-in ${
+        currentPage !== 'home' ? 'portfolio-page' : ''
+      }`
+    };
+
     switch (currentPage) {
       case 'home':
         return <HomePage onNavigate={setCurrentPage} />;
       case 'about':
-        return <AboutPage />;
+        return (
+          <div {...pageProps}>
+            <AboutPage />
+          </div>
+        );
       case 'projects':
-        return <ProjectsPage />;
+        return (
+          <div {...pageProps}>
+            <ProjectsPage />
+          </div>
+        );
       case 'contact':
-        return <ContactPage />;
+        return (
+          <div {...pageProps}>
+            <ContactPage />
+          </div>
+        );
+        case 'skills':
+        return (
+          <div {...pageProps}>
+            <Skills />
+          </div>
+        );
       default:
         return <HomePage onNavigate={setCurrentPage} />;
     }
@@ -40,9 +66,11 @@ const Portfolio = ({ onSwitchView }) => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="portfolio-container">
       {/* Dynamic Background based on theme */}
-      {isDark ? <ShootingStarsBackground /> : <FloatingParticlesBackground />}
+      <div className="background-effects">
+        {isDark ? <ShootingStarsBackground /> : <FloatingParticlesBackground />}
+      </div>
       
       {/* Header */}
       <Navbar
@@ -54,7 +82,7 @@ const Portfolio = ({ onSwitchView }) => {
       />
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-6">
+      <main className="page-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {renderCurrentPage()}
       </main>
 
@@ -67,6 +95,8 @@ const Portfolio = ({ onSwitchView }) => {
         isDarkMode={isDark}
         onToggleTheme={toggleDarkMode}
       />
+
+      <Footer/>
     </div>
   );
 };

@@ -1,10 +1,11 @@
-import React from 'react';
-import { Moon, Sun } from 'lucide-react';
+import React, { useState } from 'react';
+import { Moon, Sun, Download, Menu, X, Music } from 'lucide-react';
 import { portfolioData } from '../../data/portfolio.js';
 import { useDarkMode } from '../../utils/DarkModeContext.jsx';
 import ViewToggle from '../terminal/ViewToggle.jsx';
+import MusicPlayer from '../musicPlayer/musicPlayer.jsx'; // Add this import
 
-const PortfolioHeader = ({ 
+const Navbar = ({ 
   onSwitchView, 
   currentPage, 
   onNavigate,
@@ -12,94 +13,269 @@ const PortfolioHeader = ({
   onToggleTerminal
 }) => {
   const { isDark, toggleDarkMode } = useDarkMode();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMusicPlayerOpen, setIsMusicPlayerOpen] = useState(false); // Add this state
 
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'about', label: 'About' },
+    { id: 'skills', label: 'Skills' },
     { id: 'projects', label: 'Projects' },
     { id: 'contact', label: 'Contact' }
   ];
 
+  const handleDownloadResume = () => {
+    // Create a link element and trigger download
+    const link = document.createElement('a');
+    link.href = portfolioData.personal.resume || '/assets/resume.pdf';
+    link.download = `${portfolioData.personal.name.replace(/\s+/g, '_')}_Resume.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleMobileNavigation = (pageId) => {
+    onNavigate(pageId);
+    setIsMobileMenuOpen(false);
+  };
+
+  // Add music player toggle handler
+  const toggleMusicPlayer = () => {
+    setIsMusicPlayerOpen(!isMusicPlayerOpen);
+  };
+
   return (
-    <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <button
-          type="button"
-          onClick={() => onNavigate('home')}
-          className="flex items-center space-x-3 group"
-        >
-          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-            <span className="text-white font-bold text-lg group-hover:animate-pulse">
-              {portfolioData.name.charAt(0)}
-            </span>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-              {portfolioData.name}
-            </h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{portfolioData.title}</p>
-          </div>
-        </button>
-
-        <div className="flex items-center space-x-6">
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onNavigate(item.id)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  currentPage === item.id
-                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
-          </nav>
-
-          {/* Mobile Navigation */}
-          <div className="md:hidden">
-            <select
-              value={currentPage}
-              onChange={(e) => onNavigate(e.target.value)}
-              className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 text-sm text-gray-900 dark:text-white"
+    <>
+      <header className="glass-effect border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 no-print">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex justify-between items-center">
+            {/* Logo/Brand */}
+            <button
+              type="button"
+              onClick={() => handleMobileNavigation('home')}
+              className="flex items-center space-x-2 sm:space-x-3 btn-hover-effect"
             >
-              {navItems.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center animate-pulse-glow">
+                <span className="text-white font-bold text-sm sm:text-lg animate-pulse">
+                  {portfolioData.personal.name.charAt(0)}
+                </span>
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-lg sm:text-xl font-bold gradient-text-safe bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300">
+                  {portfolioData.personal.name}
+                </h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{portfolioData.personal.title}</p>
+              </div>
+              {/* Mobile: Show just initials and truncated name */}
+              <div className="sm:hidden">
+                <h1 className="text-sm font-bold gradient-text-safe bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300">
+                  {portfolioData.personal.name.split(' ')[0]}
+                </h1>
+              </div>
+            </button>
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-6">
+              <nav className="flex items-center space-x-1">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => onNavigate(item.id)}
+                    className={`nav-item px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                      currentPage === item.id
+                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 active'
+                        : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </nav>
+
+              {/* Download Resume Button */}
+              <button
+                onClick={handleDownloadResume}
+                className="btn-hover-effect inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium text-sm hover:shadow-lg transition-all duration-300"
+                title="Download Resume"
+              >
+                <Download className="w-4 h-4 animate-float" />
+                Resume
+              </button>
+
+              {/* Music Player Toggle - ADD THIS */}
+              <button
+                type="button"
+                onClick={toggleMusicPlayer}
+                className={`theme-toggle p-2 rounded-lg glass-effect btn-hover-effect transition-all duration-300 ${
+                  isMusicPlayerOpen ? 'bg-purple-100 dark:bg-purple-900/30' : ''
+                }`}
+                title="Toggle music player"
+              >
+                <Music className={`w-5 h-5 transition-all duration-300 ${
+                  isMusicPlayerOpen 
+                    ? 'text-purple-600 dark:text-purple-400 animate-pulse' 
+                    : 'text-gray-600 dark:text-gray-400 animate-float'
+                }`} />
+              </button>
+
+              {/* Theme Toggle */}
+              <button
+                type="button"
+                onClick={toggleDarkMode}
+                className="theme-toggle p-2 rounded-lg glass-effect btn-hover-effect"
+                title="Toggle theme"
+              >
+                {isDark ? (
+                  <Sun className="w-5 h-5 text-yellow-500 animate-rotate" style={{ animationDuration: '3s' }} />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-600 animate-float" />
+                )}
+              </button>
+
+              {/* Terminal Toggle */}
+              <ViewToggle 
+                currentView="portfolio" 
+                onSwitchView={onSwitchView}
+                isTerminalVisible={isTerminalVisible}
+                onToggleTerminal={onToggleTerminal}
+              />
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="flex items-center space-x-2 lg:hidden">
+              {/* Mobile Music Player Toggle - ADD THIS */}
+              <button
+                type="button"
+                onClick={toggleMusicPlayer}
+                className={`p-2 rounded-lg glass-effect btn-hover-effect transition-all duration-300 ${
+                  isMusicPlayerOpen ? 'bg-purple-100 dark:bg-purple-900/30' : ''
+                }`}
+                title="Toggle music player"
+              >
+                <Music className={`w-5 h-5 transition-all duration-300 ${
+                  isMusicPlayerOpen 
+                    ? 'text-purple-600 dark:text-purple-400 animate-pulse' 
+                    : 'text-gray-600 dark:text-gray-400'
+                }`} />
+              </button>
+
+              {/* Mobile Menu Toggle */}
+              <button
+                type="button"
+                onClick={toggleMobileMenu}
+                className="p-2 rounded-lg glass-effect btn-hover-effect"
+                title="Toggle menu"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                ) : (
+                  <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                )}
+              </button>
+            </div>
           </div>
+        </div>
+      </header>
 
-          {/* Theme Toggle */}
-          <button
-            type="button"
-            onClick={toggleDarkMode}
-            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors group"
-            title="Toggle theme"
-          >
-            {isDark ? (
-              <Sun className="w-5 h-5 text-yellow-500 group-hover:rotate-12 transition-transform duration-200" />
-            ) : (
-              <Moon className="w-5 h-5 text-gray-600 group-hover:-rotate-12 transition-transform duration-200" />
-            )}
-          </button>
+      {/* Music Player Component - ADD THIS */}
+      <MusicPlayer 
+        isOpen={isMusicPlayerOpen}
+        onToggle={toggleMusicPlayer}
+        audioSrc="/assets/bgm.mp3" // Update this path to your music file
+      />
 
-          {/* Terminal Toggle */}
-          <ViewToggle 
-            currentView="portfolio" 
-            onSwitchView={onSwitchView}
-            isTerminalVisible={isTerminalVisible}
-            onToggleTerminal={onToggleTerminal}
-          />
+      {/* Mobile Menu Overlay */}
+      <div className={`lg:hidden fixed inset-0 z-40 transition-all duration-300 ${
+        isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+      }`}>
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={toggleMobileMenu}></div>
+        
+        {/* Mobile Menu Panel */}
+        <div className={`absolute top-0 right-0 h-full w-80 max-w-[80vw] glass-effect border-l border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}>
+          <div className="p-6">
+            {/* Mobile Menu Header */}
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">
+                    {portfolioData.personal.name.charAt(0)}
+                  </span>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+                    {portfolioData.personal.name}
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{portfolioData.personal.title}</p>
+                </div>
+              </div>
+              <button
+                onClick={toggleMobileMenu}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              </button>
+            </div>
+
+            {/* Mobile Navigation Links */}
+            <nav className="space-y-2 mb-8">
+              {navItems.map((item, index) => (
+                <button
+                  key={item.id}
+                  onClick={() => handleMobileNavigation(item.id)}
+                  className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-200 animate-stagger ${
+                    currentPage === item.id
+                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                  }`}
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+
+            {/* Mobile Action Buttons */}
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  handleDownloadResume();
+                  toggleMobileMenu();
+                }}
+                className="w-full btn-hover-effect flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium"
+              >
+                <Download className="w-4 h-4 animate-float" />
+                Download Resume
+              </button>
+
+              <div className="flex space-x-3">
+                <ViewToggle 
+                  currentView="portfolio" 
+                  onSwitchView={onSwitchView}
+                  isTerminalVisible={isTerminalVisible}
+                  onToggleTerminal={onToggleTerminal}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+
+            {/* Mobile Footer */}
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                © 2024 {portfolioData.personal.name}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    </header>
+    </>
   );
 };
 
-export default PortfolioHeader;
+export default Navbar;

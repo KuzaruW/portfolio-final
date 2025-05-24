@@ -19,41 +19,6 @@ const TerminalHeader = ({
         : 'bg-gray-200 border-gray-300'
     }`}>
       <div className="flex items-center space-x-3">
-        {/* Traffic Light Buttons */}
-        <div className="flex space-x-2">
-          <button
-            type="button"
-            className="w-3 h-3 bg-red-500 rounded-full hover:bg-red-400 cursor-pointer transition-colors group"
-            onClick={onToggle}
-            title="Close terminal"
-          >
-            <div className="w-full h-full rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center">
-              <div className="w-1.5 h-1.5 bg-red-800 rounded-full"></div>
-            </div>
-          </button>
-          
-          <button
-            type="button"
-            className="w-3 h-3 bg-yellow-500 rounded-full hover:bg-yellow-400 cursor-pointer transition-colors group"
-            onClick={onMinimize}
-            title="Minimize terminal"
-          >
-            <div className="w-full h-full rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center">
-              <div className="w-1.5 h-0.5 bg-yellow-800 rounded-full"></div>
-            </div>
-          </button>
-          
-          <button
-            type="button"
-            className="w-3 h-3 bg-green-500 rounded-full hover:bg-green-400 cursor-pointer transition-colors group"
-            onClick={() => setIsMaximized(!isMaximized)}
-            title={isMaximized ? "Restore window" : "Maximize window"}
-          >
-            <div className="w-full h-full rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center">
-              <div className="w-1.5 h-1.5 bg-green-800 rounded-full"></div>
-            </div>
-          </button>
-        </div>
         
         {/* Terminal Title */}
         <div className="flex items-center space-x-2">

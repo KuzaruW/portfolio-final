@@ -48,8 +48,6 @@ const AboutSection = ({ onNavigate }) => {
                 <div className="text-center">
                   <User className="w-24 h-24 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
                   <p className="text-gray-500 dark:text-gray-400 text-sm">
-                    Add your photo to:<br />
-                    /public/assets/images/profile.jpg
                   </p>
                 </div>
               </div>
@@ -59,10 +57,10 @@ const AboutSection = ({ onNavigate }) => {
             </div>
             
             {/* Floating elements */}
-            <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow-400 rounded-2xl flex items-center justify-center animate-bounce shadow-lg">
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow-400 rounded-2xl flex items-center justify-center animate-bounce shadow-lg z-10">
               <Code className="w-8 h-8 text-white" />
             </div>
-            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-green-400 rounded-2xl flex items-center justify-center animate-pulse shadow-lg">
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-green-400 rounded-2xl flex items-center justify-center animate-pulse shadow-lg z-10">
               <Award className="w-6 h-6 text-white" />
             </div>
             

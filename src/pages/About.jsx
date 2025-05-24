@@ -1,113 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Code, Database, Palette, Globe, Server, Smartphone, Award, Calendar, MapPin, Coffee } from 'lucide-react';
 import { portfolioData } from '../data/portfolio.js';
 
 const AboutPage = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [isVisible, setIsVisible] = useState({});
 
-  // Extended bio sections
+  // Intersection Observer for scroll animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(prev => ({
+            ...prev,
+            [entry.target.id]: entry.isIntersecting
+          }));
+        });
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    const elements = document.querySelectorAll('[data-animate]');
+    elements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Bio sections from portfolio data
   const bioSections = [
     {
       title: "My Journey",
-      content: "I started my journey in web development 3 years ago, driven by curiosity and a passion for creating digital solutions. What began as a hobby quickly evolved into a career as I discovered the power of code to solve real-world problems."
+      content: portfolioData.personal.bio.detailed,
+      icon: "🚀"
     },
     {
       title: "What Drives Me",
-      content: "I'm passionate about building user-centric applications that make a difference. I believe great software is not just about clean code, but about understanding user needs and creating seamless experiences."
+      content: portfolioData.personal.bio.mission,
+      icon: "💡"
     },
     {
       title: "Beyond Code",
-      content: "When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or sharing knowledge with the developer community. I also enjoy photography and hiking in my free time."
+      content: portfolioData.personal.bio.interests,
+      icon: "🌟"
     }
   ];
-
-  // Experience timeline
-  const experience = [
-    {
-      year: "2024",
-      title: "Senior Full Stack Developer",
-      company: "Tech Innovations Inc.",
-      description: "Leading development of enterprise web applications using React, Node.js, and cloud technologies.",
-      technologies: ["React", "Node.js", "AWS", "MongoDB"]
-    },
-    {
-      year: "2023",
-      title: "Full Stack Developer",
-      company: "Digital Solutions Co.",
-      description: "Developed and maintained multiple client projects, focusing on performance optimization and user experience.",
-      technologies: ["React", "Express", "PostgreSQL", "Docker"]
-    },
-    {
-      year: "2022",
-      title: "Frontend Developer",
-      company: "StartupTech",
-      description: "Built responsive web applications and collaborated with design teams to implement pixel-perfect UIs.",
-      technologies: ["JavaScript", "CSS", "Vue.js", "Firebase"]
-    }
-  ];
-
-  // Skill categories
-  const skillCategories = {
-    frontend: {
-      icon: Globe,
-      name: 'Frontend',
-      color: 'from-blue-500 to-cyan-500',
-      skills: ['React', 'JavaScript', 'TypeScript', 'CSS', 'HTML', 'Vue.js', 'Angular', 'Tailwind CSS']
-    },
-    backend: {
-      icon: Server,
-      name: 'Backend',
-      color: 'from-green-500 to-emerald-500',
-      skills: ['Node.js', 'Python', 'Express', 'Django', 'PHP', 'Laravel', 'REST APIs', 'GraphQL']
-    },
-    database: {
-      icon: Database,
-      name: 'Database',
-      color: 'from-purple-500 to-violet-500',
-      skills: ['MongoDB', 'PostgreSQL', 'MySQL', 'Redis', 'SQLite', 'Firebase']
-    },
-    tools: {
-      icon: Code,
-      name: 'Tools & DevOps',
-      color: 'from-orange-500 to-red-500',
-      skills: ['Git', 'Docker', 'AWS', 'Linux', 'Webpack', 'Vite', 'CI/CD', 'Jest']
-    }
-  };
-
-  const achievements = [
-    { icon: Award, text: "Led 5+ successful project launches" },
-    { icon: Code, text: "1000+ commits across various projects" },
-    { icon: Coffee, text: "Mentored 10+ junior developers" },
-    { icon: Globe, text: "Contributed to 15+ open source projects" }
-  ];
-
-  const getDisplaySkills = () => {
-    if (activeCategory === 'all') {
-      return Object.values(skillCategories).flatMap(cat => cat.skills);
-    }
-    return skillCategories[activeCategory]?.skills || [];
-  };
 
   return (
-    <div className="py-12 space-y-24">
+    <div className="portfolio-page space-y-16">
       {/* Hero Section */}
-      <section className="text-center">
-        <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
-          About Me
-        </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+      <section 
+        id="hero"
+        data-animate
+        className={`text-center section-reveal ${isVisible.hero ? 'visible' : ''}`}
+      >
+        <div className="relative">
+          <h1 className="page-title gradient-text-safe bg-gradient-to-r from-blue-600 to-purple-600">
+            About Me
+          </h1>
+          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-6xl animate-float opacity-20">
+            👨‍💻
+          </div>
+        </div>
+        <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto animate-fade-in-up">
           Get to know the person behind the code
         </p>
       </section>
 
       {/* Bio Sections */}
-      <section className="grid md:grid-cols-3 gap-8">
+      <section 
+        id="bio"
+        data-animate
+        className="grid md:grid-cols-3 gap-8"
+      >
         {bioSections.map((section, index) => (
           <div
             key={index}
-            className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
+            className={`glass-effect content-card rounded-2xl p-6 card-hover animate-stagger ${
+              isVisible.bio ? 'section-reveal visible' : 'section-reveal'
+            }`}
+            style={{ animationDelay: `${index * 0.2}s` }}
           >
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            <div className="text-4xl mb-4 text-center animate-float">
+              {section.icon}
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               {section.title}
             </h3>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -118,17 +93,25 @@ const AboutPage = () => {
       </section>
 
       {/* Quick Stats */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {achievements.map((achievement, index) => {
-          const IconComponent = achievement.icon;
+      <section 
+        id="stats"
+        data-animate
+        className="grid grid-cols-2 md:grid-cols-4 gap-6"
+      >
+        {portfolioData.achievements.map((achievement, index) => {
+          const IconComponent = eval(achievement.icon); // Note: In production, use proper icon mapping
           return (
             <div
               key={index}
-              className="text-center bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
+              className={`text-center glass-effect content-card rounded-2xl p-6 card-hover animate-stagger ${
+                isVisible.stats ? 'section-reveal visible' : 'section-reveal'
+              }`}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <div className={`w-12 h-12 bg-gradient-to-r ${achievement.color} rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow`}>
                 <IconComponent className="w-6 h-6 text-white" />
               </div>
+              <div className="text-2xl mb-2 animate-float">{achievement.emoji}</div>
               <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">
                 {achievement.text}
               </p>
@@ -138,144 +121,216 @@ const AboutPage = () => {
       </section>
 
       {/* Experience Timeline */}
-      <section>
-        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
+      <section id="experience" data-animate>
+        <h2 className={`text-3xl font-bold text-center text-gray-900 dark:text-white mb-12 section-reveal ${
+          isVisible.experience ? 'visible' : ''
+        }`}>
           Professional Experience
+          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto mt-4 rounded-full"></div>
         </h2>
         
-        <div className="space-y-8">
-          {experience.map((exp, index) => (
-            <div
-              key={index}
-              className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
-            >
-              <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                    <Calendar className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-                      {exp.year}
+        <div className="relative">
+          {/* Timeline Line */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 to-purple-600 rounded-full hidden md:block"></div>
+          
+          <div className="space-y-12">
+            {portfolioData.experience.map((exp, index) => (
+              <div
+                key={exp.id}
+                className={`relative flex items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} section-reveal ${
+                  isVisible.experience ? 'visible' : ''
+                }`}
+                style={{ transitionDelay: `${index * 0.2}s` }}
+              >
+                {/* Timeline Dot */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white dark:bg-gray-800 rounded-full border-4 border-blue-500 z-10 hidden md:block animate-pulse"></div>
+                
+                <div className={`w-full md:w-5/12 ${index % 2 === 0 ? 'md:pr-8' : 'md:pl-8'}`}>
+                  <div className="glass-effect content-card rounded-2xl p-8 card-hover">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className={`w-12 h-12 bg-gradient-to-r ${exp.color} rounded-xl flex items-center justify-center animate-pulse-glow`}>
+                        <Calendar className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <div className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                          {exp.year}
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                          {exp.title}
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400">{exp.company}</p>
+                      </div>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      {exp.title}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400">{exp.company}</p>
+                    
+                    <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                      {exp.description}
+                    </p>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      {exp.technologies.map((tech, techIndex) => (
+                        <span
+                          key={techIndex}
+                          className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm rounded-full font-medium btn-hover-effect"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-              
-              <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
-                {exp.description}
-              </p>
-              
-              <div className="flex flex-wrap gap-2">
-                {exp.technologies.map((tech, techIndex) => (
-                  <span
-                    key={techIndex}
-                    className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm rounded-full font-medium"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Skills Section */}
-      <section>
-        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
-          Technical Skills
+      {/* Education Section */}
+      <section id="education" data-animate>
+        <h2 className={`text-3xl font-bold text-center text-gray-900 dark:text-white mb-12 section-reveal ${
+          isVisible.education ? 'visible' : ''
+        }`}>
+          Education
+          <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-600 mx-auto mt-4 rounded-full"></div>
         </h2>
-
-        {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          <button
-            onClick={() => setActiveCategory('all')}
-            className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
-              activeCategory === 'all'
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-            }`}
-          >
-            All Skills
-          </button>
-          {Object.entries(skillCategories).map(([key, category]) => {
-            const IconComponent = category.icon;
-            return (
-              <button
-                key={key}
-                onClick={() => setActiveCategory(key)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
-                  activeCategory === key
-                    ? `bg-gradient-to-r ${category.color} text-white shadow-lg`
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
-              >
-                <IconComponent className="w-4 h-4" />
-                {category.name}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Skills Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {getDisplaySkills().map((skill, i) => (
+        
+        <div className="space-y-8">
+          {portfolioData.education.map((edu, index) => (
             <div
-              key={skill}
-              className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-lg hover:scale-105 transition-all duration-300"
-              style={{ animationDelay: `${i * 0.05}s` }}
+              key={edu.id}
+              className={`glass-effect content-card rounded-2xl p-8 card-hover section-reveal ${
+                isVisible.education ? 'visible' : ''
+              }`}
+              style={{ transitionDelay: `${index * 0.2}s` }}
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-2">
-                <Code className="w-4 h-4 text-white" />
+              <div className="flex flex-col md:flex-row md:items-start gap-6">
+                {/* Education Icon */}
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center animate-pulse-glow">
+                  <Database className="w-8 h-8 text-white" />
+                </div>
+                
+                <div className="flex-1">
+                  {/* Header */}
+                  <div className="mb-4">
+                    <div className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">
+                      {edu.duration}
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                      {edu.degree}
+                    </h3>
+                    <p className="text-lg text-gray-600 dark:text-gray-400 mb-1">{edu.institution}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500">
+                      {edu.location} {edu.gpa && `• GPA: ${edu.gpa}`}
+                    </p>
+                  </div>
+
+                  {/* Coursework */}
+                  {edu.coursework && (
+                    <div className="mb-4">
+                      <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Key Coursework:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {edu.coursework.map((course, courseIndex) => (
+                          <span 
+                            key={courseIndex}
+                            className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 text-sm rounded-full font-medium btn-hover-effect"
+                          >
+                            {course}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Projects */}
+                  {edu.projects && (
+                    <div className="mb-4">
+                      <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Notable Projects:</h4>
+                      <ul className="space-y-2">
+                        {edu.projects.map((project, projectIndex) => (
+                          <li 
+                            key={projectIndex}
+                            className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300"
+                          >
+                            <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                            {project}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Achievements */}
+                  {edu.achievements && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Achievements:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {edu.achievements.map((achievement, achIndex) => (
+                          <span 
+                            key={achIndex}
+                            className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 text-sm rounded-full font-medium btn-hover-effect"
+                          >
+                            {achievement}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                {skill}
-              </span>
             </div>
           ))}
         </div>
       </section>
 
       {/* Personal Info */}
-      <section className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+      <section 
+        id="personal"
+        data-animate
+        className={`glass-effect content-card rounded-2xl p-8 card-hover section-reveal ${
+          isVisible.personal ? 'visible' : ''
+        }`}
+      >
         <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-8">
           Personal Details
+          <div className="w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-600 mx-auto mt-4 rounded-full"></div>
         </h2>
         
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <span className="text-gray-600 dark:text-gray-300">Based in Remote / Global</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Code className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <span className="text-gray-600 dark:text-gray-300">3+ Years of Experience</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Award className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <span className="text-gray-600 dark:text-gray-300">Available for Freelance</span>
-            </div>
+            {[
+              { icon: MapPin, text: portfolioData.personal.location, color: "text-blue-600 dark:text-blue-400" },
+              { icon: Code, text: "3+ Years of Experience", color: "text-green-600 dark:text-green-400" },
+              { icon: Award, text: portfolioData.personal.availability.status, color: "text-purple-600 dark:text-purple-400" }
+            ].map((item, index) => (
+              <div 
+                key={index}
+                className="flex items-center gap-3 card-hover"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <item.icon className={`w-5 h-5 ${item.color}`} />
+                <span className="text-gray-600 dark:text-gray-300">
+                  {item.text}
+                </span>
+              </div>
+            ))}
           </div>
           
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Coffee className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <span className="text-gray-600 dark:text-gray-300">Coffee Enthusiast</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <span className="text-gray-600 dark:text-gray-300">Open Source Contributor</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Palette className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <span className="text-gray-600 dark:text-gray-300">UI/UX Enthusiast</span>
-            </div>
+            {[
+              { icon: Coffee, text: "Coffee Enthusiast", color: "text-orange-600 dark:text-orange-400" },
+              { icon: Globe, text: "Open Source Contributor", color: "text-indigo-600 dark:text-indigo-400" },
+              { icon: Palette, text: "UI/UX Enthusiast", color: "text-pink-600 dark:text-pink-400" }
+            ].map((item, index) => (
+              <div 
+                key={index}
+                className="flex items-center gap-3 card-hover"
+                style={{ animationDelay: `${(index + 3) * 0.1}s` }}
+              >
+                <item.icon className={`w-5 h-5 ${item.color}`} />
+                <span className="text-gray-600 dark:text-gray-300">
+                  {item.text}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>

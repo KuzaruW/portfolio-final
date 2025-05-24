@@ -5,7 +5,7 @@ import TerminalOutput from '../components/terminal/TerminalOutput.jsx';
 import TerminalInput from '../components/terminal/TerminalInput.jsx';
 import TerminalFooter from '../components/terminal/TerminalFooter.jsx';
 import { Terminal as TerminalIcon } from 'lucide-react';
-import { useDarkMode } from '../utils/DarkModeContext.jsx'; // Import your existing context
+import { useDarkMode } from '../utils/DarkModeContext.jsx';
 
 const Terminal = ({ 
   onSwitchView, 
@@ -14,7 +14,6 @@ const Terminal = ({
   onToggle,
   ...otherProps
 }) => {
-  // Use your existing dark mode context
   const { isDark, toggleDarkMode } = useDarkMode();
 
   const [history, setHistory] = useState([
@@ -41,6 +40,10 @@ const Terminal = ({
       setTimeout(() => onNavigate('about'), 500);
       return '👨‍💻 Loading about section...';
     },
+    skills: () => {
+      setTimeout(() => onNavigate('skills'), 500);
+      return '🛠️ Loading skills & expertise showcase...';
+    },
     projects: () => {
       setTimeout(() => onNavigate('projects'), 500);
       return '🚀 Opening projects showcase...';
@@ -54,7 +57,6 @@ const Terminal = ({
       return '🚀 Switching to portfolio view...';
     },
     theme: () => {
-      // Use the context's toggle function
       toggleDarkMode();
       return `🎨 Theme switched to ${isDark ? 'light' : 'dark'} mode successfully!`;
     },
@@ -62,11 +64,8 @@ const Terminal = ({
       setTimeout(() => onToggle(), 500);
       return '👋 Closing terminal... See you later!';
     },
-    minimize: () => {
-      setIsMinimized(true);
-      return '⬇️ Terminal minimized';
-    },
-    maximize: () => {
+    // Move changeSize here since it affects terminal state
+    changesize: () => {
       setIsMaximized(!isMaximized);
       return `${!isMaximized ? '⬆️ Terminal maximized' : '⬇️ Terminal restored'}`;
     }
@@ -110,24 +109,34 @@ const Terminal = ({
       return;
     }
     
-    // Then check your existing commands
+    // Then check your existing commands from commands.js
     if (commands && commands[command]) {
       const output = commands[command]();
       newHistory.push(output, '');
-    } else if (command) {
+      setHistory(newHistory);
+      return;
+    }
+    
+    // Command not found
+    if (command) {
       newHistory.push(
         `Command not found: ${command}`, 
         '💡 Tip: Type "help" for available commands or use Tab for suggestions.', 
         ''
       );
+      setHistory(newHistory);
     }
-    
-    setHistory(newHistory);
   };
 
   const handleMinimize = () => {
     setIsMinimized(!isMinimized);
   };
+
+  // Get all available commands for autocomplete
+  const allCommands = [
+    ...Object.keys(navigationCommands),
+    ...Object.keys(commands || {})
+  ];
 
   // If terminal is not visible, show the floating button
   if (!isVisible) {
@@ -172,13 +181,15 @@ const Terminal = ({
             : 'bg-gray-100 border-gray-300'
         }`}>
           
-          {/* Terminal Header */}
+          {/* Terminal Header - Pass required props */}
           <TerminalHeader 
             onSwitchView={onSwitchView}
             isMaximized={isMaximized}
             setIsMaximized={setIsMaximized}
             onToggle={onToggle}
             onMinimize={handleMinimize}
+            isDarkMode={isDark}
+            onToggleTheme={toggleDarkMode}
           />
 
           {/* Terminal Content */}
@@ -202,7 +213,7 @@ const Terminal = ({
                 setInput={setInput}
                 onExecuteCommand={executeCommand}
                 inputRef={inputRef}
-                availableCommands={[...Object.keys(commands || {}), ...Object.keys(navigationCommands)]}
+                availableCommands={allCommands}
               />
 
               {/* Terminal Footer */}

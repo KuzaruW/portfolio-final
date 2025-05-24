@@ -1,24 +1,167 @@
 @import "tailwindcss";
 
+/* =================================== */
+/* PORTFOLIO STYLES & ANIMATIONS */
+/* =================================== */
+
 /* Enable class-based dark mode */
 @variant dark (.dark &);
 
-/* Custom animations */
+/* =================================== */
+/* CORE ANIMATIONS */
+/* =================================== */
+
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
 
 @keyframes slideUp {
-  0% { 
-    transform: translateY(20px); 
-    opacity: 0; 
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
   }
-  100% { 
-    transform: translateY(0); 
-    opacity: 1; 
+  100% {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes gridMove {
+  0% { 
+    transform: translate(0, 0); 
+  }
+  100% { 
+    transform: translate(40px, 40px); 
+  }
+}
+
+@keyframes rotate360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
+}
+
+/* =================================== */
+/* UTILITY ANIMATION CLASSES */
+/* =================================== */
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-in-out;
@@ -26,4 +169,746 @@
 
 .animate-slide-up {
   animation: slideUp 0.5s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+.animate-pop-in {
+  animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Remove float animation from button icons */
+.btn-hover-effect .animate-float {
+  animation: none;
+}
+
+/* Keep float animation for other elements but not in buttons */
+.animate-float:not(.btn-hover-effect *) {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Disable float animation for button icons specifically */
+button .animate-float,
+.btn-hover-effect .animate-float,
+a .animate-float {
+  animation: none;
+}
+
+/* Keep float animation for decorative elements only */
+.decorative-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle 1.5s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.animate-gradient-shift {
+  animation: gradientShift 3s ease infinite;
+}
+
+.animate-grid-move {
+  animation: gridMove 20s linear infinite;
+}
+
+.animate-rotate {
+  animation: rotate360 2s linear infinite;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* =================================== */
+/* STAGGERED ANIMATIONS */
+/* =================================== */
+
+.animate-stagger {
+  animation-fill-mode: both;
+}
+
+.animate-stagger:nth-child(1) { animation-delay: 0.1s; }
+.animate-stagger:nth-child(2) { animation-delay: 0.2s; }
+.animate-stagger:nth-child(3) { animation-delay: 0.3s; }
+.animate-stagger:nth-child(4) { animation-delay: 0.4s; }
+.animate-stagger:nth-child(5) { animation-delay: 0.5s; }
+.animate-stagger:nth-child(6) { animation-delay: 0.6s; }
+.animate-stagger:nth-child(7) { animation-delay: 0.7s; }
+.animate-stagger:nth-child(8) { animation-delay: 0.8s; }
+
+.stagger-delay-1 { transition-delay: 0.1s; }
+.stagger-delay-2 { transition-delay: 0.2s; }
+.stagger-delay-3 { transition-delay: 0.3s; }
+.stagger-delay-4 { transition-delay: 0.4s; }
+.stagger-delay-5 { transition-delay: 0.5s; }
+
+/* Floating elements with different delays */
+.floating-element {
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-element:nth-child(2) {
+  animation-delay: -2s;
+}
+
+.floating-element:nth-child(3) {
+  animation-delay: -4s;
+}
+
+/* =================================== */
+/* PORTFOLIO LAYOUT & SPACING */
+/* =================================== */
+
+/* Ensure proper spacing for all portfolio pages */
+.portfolio-page {
+  padding-top: 6rem; /* 96px - accounts for navbar height */
+  padding-bottom: 3rem;
+  min-height: 100vh;
+}
+
+.portfolio-container {
+  min-height: 100vh;
+  position: relative;
+}
+
+.portfolio-content {
+  padding-top: 0;
+  position: relative;
+  z-index: 10;
+}
+
+/* Section spacing improvements */
+.section-spacing {
+  margin-bottom: 6rem;
+}
+
+@media (min-width: 768px) {
+  .section-spacing {
+    margin-bottom: 8rem;
+  }
+}
+
+/* Section reveal animations */
+.section-reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.section-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =================================== */
+/* GRADIENT TEXT EFFECTS */
+/* =================================== */
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  line-height: 1.2;
+  display: inline-block;
+  position: relative;
+}
+
+.gradient-text-safe {
+  background: linear-gradient(135deg, var(--tw-gradient-from), var(--tw-gradient-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  line-height: 1.2;
+  position: relative;
+}
+
+/* Fallback for gradient text in case of rendering issues */
+.gradient-text::before,
+.gradient-text-safe::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  color: #374151; /* fallback color for light mode */
+}
+
+.dark .gradient-text::before,
+.dark .gradient-text-safe::before {
+  color: #f3f4f6; /* fallback color for dark mode */
+}
+
+/* Fallback for browsers that don't support background-clip */
+@supports not (-webkit-background-clip: text) {
+  .gradient-text-safe {
+    color: #374151;
+  }
+  .dark .gradient-text-safe {
+    color: #f3f4f6;
+  }
+}
+
+/* =================================== */
+/* RESPONSIVE TYPOGRAPHY */
+/* =================================== */
+
+.page-title {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .page-title {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+  }
+  
+  .portfolio-page-mobile {
+    padding-top: 5rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-title {
+    font-size: clamp(3rem, 7vw, 6rem);
+  }
+}
+
+/* =================================== */
+/* CARD & COMPONENT STYLES */
+/* =================================== */
+
+.content-card {
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Glass morphism effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-effect {
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.dark .card-hover:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Glowing effects */
+.glow-effect {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.glow-on-hover {
+  transition: box-shadow 0.3s ease;
+}
+
+.glow-on-hover:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+/* =================================== */
+/* BACKGROUND EFFECTS */
+/* =================================== */
+
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: gridMove 20s linear infinite;
+}
+
+/* Parallax effect enhanced */
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.parallax-element {
+  will-change: transform;
+}
+
+.background-effects {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Animated gradients */
+.animated-gradient {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+/* =================================== */
+/* INTERACTIVE ELEMENTS */
+/* =================================== */
+
+/* Interactive sparkles */
+.sparkle {
+  position: absolute;
+  pointer-events: none;
+  animation: sparkle 1.5s ease-out forwards;
+}
+
+/* Button hover effects */
+.btn-hover-effect {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-hover-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-hover-effect:hover::before {
+  left: 100%;
+}
+
+.btn-hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Remove float animation from button icons */
+.btn-hover-effect .animate-float {
+  animation: none;
+}
+
+/* Keep float animation for other elements but not in buttons */
+.animate-float:not(.btn-hover-effect *) {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Form input effects */
+.input-focus-effect {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.input-focus-effect:focus {
+  transform: scale(1.02);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* =================================== */
+/* SCROLL EFFECTS */
+/* =================================== */
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* Progress indicator */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  transform-origin: left;
+  z-index: 50;
+}
+
+/* =================================== */
+/* LOADING ANIMATIONS */
+/* =================================== */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.loading-ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.dark .skeleton {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* =================================== */
+/* THEME TRANSITIONS */
+/* =================================== */
+
+/* Dark mode transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Theme toggle animation */
+.theme-toggle {
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: rotate(180deg);
+}
+
+/* =================================== */
+/* ACCESSIBILITY & FOCUS STATES */
+/* =================================== */
+
+/* Focus visible for better accessibility */
+.focus-visible:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .parallax-element {
+    transform: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .gradient-text,
+  .gradient-text-safe {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: unset;
+    color: currentColor;
+  }
+}
+
+/* =================================== */
+/* PRINT STYLES */
+/* =================================== */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .portfolio-page {
+    padding-top: 0 !important;
+  }
+  
+  .section-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* =================================== */
+/* UTILITY CLASSES */
+/* =================================== */
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.backdrop-blur-strong {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Ensure proper z-index stacking */
+.page-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* Section transitions */
+.section-transition {
+  background: linear-gradient(45deg, transparent 30%, rgba(59, 130, 246, 0.1) 50%, transparent 70%);
+  height: 2px;
+  margin: 4rem 0;
+  animation: gradientShift 3s ease infinite;
+  background-size: 200% 200%;
+}
+
+/* =================================== */
+/* MOBILE OPTIMIZATIONS */
+/* =================================== */
+
+@media (max-width: 768px) {
+  .portfolio-page-mobile {
+    padding-top: 5rem !important;
+  }
+  
+  .page-title {
+    font-size: clamp(1.5rem, 8vw, 3rem);
+  }
+  
+  .section-spacing {
+    margin-bottom: 3rem;
+  }
+  
+  /* Reduce animations on mobile for performance */
+  .animate-float {
+    animation: none;
+  }
+  
+  .parallax-element {
+    transform: none !important;
+  }
+}
+
+/* =================================== */
+/* PERFORMANCE OPTIMIZATIONS */
+/* =================================== */
+
+/* GPU acceleration for animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Optimize for 60fps animations */
+.smooth-animation {
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+/* =================================== */
+/* COMPONENT-SPECIFIC STYLES */
+/* =================================== */
+
+/* Mobile menu specific styles */
+.mobile-menu-panel {
+  background: rgb(255, 255, 255) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.dark .mobile-menu-panel {
+  background: rgb(17, 24, 39) !important;
+}
+
+/* Navigation styles */
+.nav-item {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-item:hover::after,
+.nav-item.active::after {
+  width: 100%;
+}
+
+/* Project card enhancements */
+.project-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.project-card:hover {
+  transform: translateY(-10px) rotateX(5deg);
+}
+
+/* Testimonial card styles */
+.testimonial-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .testimonial-card {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Contact form enhancements */
+.form-group {
+  position: relative;
+}
+
+.form-label {
+  transition: all 0.3s ease;
+  transform-origin: left top;
+}
+
+.form-input:focus + .form-label,
+.form-input:not(:placeholder-shown) + .form-label {
+  transform: translateY(-1.5rem) scale(0.8);
+  color: #3b82f6;
+}
+
+/* =================================== */
+/* FALLBACKS & BROWSER SUPPORT */
+/* =================================== */
+
+/* Fallback for older browsers */
+@supports not (backdrop-filter: blur(10px)) {
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.9);
+  }
+  
+  .dark .glass-effect {
+    background: rgba(0, 0, 0, 0.9);
+  }
 }

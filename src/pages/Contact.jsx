@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Github, Linkedin, MapPin, Phone, Send, MessageCircle, Clock, Calendar, Coffee, Video, Code, Smartphone, Palette } from 'lucide-react';
 import { portfolioData } from '../data/portfolio.js';
 
@@ -13,6 +13,27 @@ const ContactPage = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVisible, setIsVisible] = useState({});
+
+  // Intersection Observer for scroll animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(prev => ({
+            ...prev,
+            [entry.target.id]: entry.isIntersecting
+          }));
+        });
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    const elements = document.querySelectorAll('[data-animate]');
+    elements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -37,10 +58,22 @@ const ContactPage = () => {
         projectType: '', 
         message: '' 
       });
-      alert('Thank you for your message! I\'ll get back to you within 24 hours.');
+      
+      // Success notification
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce-in';
+      notification.textContent = 'Message sent successfully! 🎉';
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 3000);
     }, 2000);
   };
 
+  // Contact methods from portfolio data
   const contactMethods = [
     {
       icon: Mail,
@@ -49,8 +82,8 @@ const ContactPage = () => {
       value: portfolioData.contact.email,
       href: `mailto:${portfolioData.contact.email}`,
       color: 'from-blue-500 to-blue-600',
-      hoverColor: 'hover:from-blue-600 hover:to-blue-700',
-      description: 'Best for detailed project discussions'
+      description: 'Best for detailed project discussions',
+      emoji: '📧'
     },
     {
       icon: Github,
@@ -59,8 +92,8 @@ const ContactPage = () => {
       value: '@' + portfolioData.contact.github.split('/').pop(),
       href: portfolioData.contact.github,
       color: 'from-gray-700 to-gray-800',
-      hoverColor: 'hover:from-gray-800 hover:to-gray-900',
-      description: 'Explore my open source contributions'
+      description: 'Explore my open source contributions',
+      emoji: '💻'
     },
     {
       icon: Linkedin,
@@ -69,115 +102,88 @@ const ContactPage = () => {
       value: 'Connect with me',
       href: portfolioData.contact.linkedin,
       color: 'from-blue-600 to-blue-700',
-      hoverColor: 'hover:from-blue-700 hover:to-blue-800',
-      description: 'Professional networking and opportunities'
+      description: 'Professional networking and opportunities',
+      emoji: '🤝'
     }
   ];
 
-  const services = [
-    {
-      icon: Code,
-      title: 'Web Development',
-      description: 'Full-stack web applications using modern technologies like React, Node.js, and cloud services.'
-    },
-    {
-      icon: Smartphone,
-      title: 'Mobile Development',
-      description: 'Cross-platform mobile apps and Progressive Web Apps for iOS and Android.'
-    },
-    {
-      icon: Palette,
-      title: 'UI/UX Consultation',
-      description: 'User experience design and interface optimization for better user engagement.'
-    },
-    {
-      icon: Coffee,
-      title: 'Technical Consulting',
-      description: 'Architecture planning, code reviews, and technical guidance for your projects.'
-    }
-  ];
-
+  // Availability from portfolio data
   const availability = [
-    { day: 'Monday - Friday', time: '9:00 AM - 6:00 PM EST', available: true },
+    { day: 'Monday - Friday', time: portfolioData.personal.availability.workingHours, available: true },
     { day: 'Saturday', time: '10:00 AM - 2:00 PM EST', available: true },
     { day: 'Sunday', time: 'Emergency only', available: false }
   ];
 
-  const projectTypes = [
-    'Web Application',
-    'Mobile App',
-    'E-commerce Site',
-    'Portfolio Website',
-    'API Development',
-    'UI/UX Design',
-    'Technical Consulting',
-    'Other'
-  ];
-
-  const budgetRanges = [
-    'Under $5,000',
-    '$5,000 - $10,000',
-    '$10,000 - $25,000',
-    '$25,000 - $50,000',
-    '$50,000+',
-    'Let\'s discuss'
-  ];
-
-  const timelines = [
-    'ASAP',
-    '1-2 weeks',
-    '1 month',
-    '2-3 months',
-    '3-6 months',
-    '6+ months'
-  ];
+  const projectTypes = ['Web Application', 'Mobile App', 'E-commerce Site', 'Portfolio Website', 'API Development', 'UI/UX Design', 'Technical Consulting', 'Other'];
+  const budgetRanges = ['Under $5,000', '$5,000 - $10,000', '$10,000 - $25,000', '$25,000 - $50,000', '$50,000+', 'Let\'s discuss'];
+  const timelines = ['ASAP', '1-2 weeks', '1 month', '2-3 months', '3-6 months', '6+ months'];
 
   return (
-    <div className="py-12 space-y-16">
+    <div className="portfolio-page space-y-16">
       {/* Header */}
-      <section className="text-center">
-        <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent mb-6">
-          Let's Work Together
-        </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">
+      <section 
+        id="header"
+        data-animate
+        className={`text-center section-reveal ${isVisible.header ? 'visible' : ''}`}
+      >
+        <div className="relative">
+          <h1 className="page-title gradient-text-safe bg-gradient-to-r from-pink-600 to-orange-600">
+            Let's Work Together
+          </h1>
+          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-6xl animate-float opacity-20">
+            🤝
+          </div>
+        </div>
+        <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8 animate-fade-in-up">
           Ready to bring your ideas to life? I'd love to hear about your project and discuss how we can make it happen.
         </p>
         
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-green-600 dark:text-green-400">24h</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Response Time</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">50+</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Projects Completed</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">100%</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Client Satisfaction</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">3+</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Years Experience</div>
-          </div>
+          {[
+            { value: '24h', label: 'Response Time', emoji: '⚡' },
+            { value: '50+', label: 'Projects Completed', emoji: '🚀' },
+            { value: '100%', label: 'Client Satisfaction', emoji: '⭐' },
+            { value: '3+', label: 'Years Experience', emoji: '💼' }
+          ].map((stat, index) => (
+            <div 
+              key={index}
+              className={`text-center card-hover animate-stagger ${
+                isVisible.header ? 'section-reveal visible' : 'section-reveal'
+              }`}
+              style={{ transitionDelay: `${index * 0.1}s` }}
+            >
+              <div className="text-2xl mb-2 animate-float">{stat.emoji}</div>
+              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                {stat.value}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Services */}
-      <section>
-        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
+      <section id="services" data-animate>
+        <h2 className={`text-3xl font-bold text-center text-gray-900 dark:text-white mb-12 section-reveal ${
+          isVisible.services ? 'visible' : ''
+        }`}>
           Services I Offer
+          <div className="w-24 h-1 bg-gradient-to-r from-pink-500 to-orange-500 mx-auto mt-4 rounded-full"></div>
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((service, index) => {
-            const IconComponent = service.icon;
+          {portfolioData.services.map((service, index) => {
+            const IconComponent = eval(service.icon); // Note: In production, use proper icon mapping
             return (
               <div
-                key={index}
-                className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 text-center"
+                key={service.id}
+                className={`glass-effect content-card rounded-2xl p-6 text-center card-hover animate-stagger ${
+                  isVisible.services ? 'section-reveal visible' : 'section-reveal'
+                }`}
+                style={{ transitionDelay: `${index * 0.1}s` }}
               >
-                <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-orange-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="text-4xl mb-4 animate-float">{service.emoji}</div>
+                <div className={`w-12 h-12 bg-gradient-to-r ${service.color} rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow`}>
                   <IconComponent className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
@@ -194,20 +200,22 @@ const ContactPage = () => {
 
       <div className="grid lg:grid-cols-3 gap-16">
         {/* Contact Form */}
-        <div className="lg:col-span-2">
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 dark:border-gray-700">
+        <div className="lg:col-span-2" id="form" data-animate>
+          <div className={`glass-effect content-card rounded-3xl p-8 card-hover section-reveal ${
+            isVisible.form ? 'visible' : ''
+          }`}>
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-              <Send className="text-pink-600 dark:text-pink-400" />
+              <Send className="text-pink-600 dark:text-pink-400 animate-pulse" />
               Start a Project
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-8">
-              Fill out the form below and I'll get back to you within 24 hours.
+              Fill out the form below and I'll get back to you within {portfolioData.personal.availability.responseTime}.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Basic Info */}
               <div className="grid md:grid-cols-2 gap-6">
-                <div>
+                <div className="form-group">
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Full Name *
                   </label>
@@ -218,11 +226,11 @@ const ContactPage = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-colors text-gray-900 dark:text-white"
+                    className="w-full px-4 py-3 glass-effect rounded-xl input-focus-effect text-gray-900 dark:text-white"
                     placeholder="John Doe"
                   />
                 </div>
-                <div>
+                <div className="form-group">
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Email Address *
                   </label>
@@ -233,13 +241,13 @@ const ContactPage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-colors text-gray-900 dark:text-white"
+                    className="w-full px-4 py-3 glass-effect rounded-xl input-focus-effect text-gray-900 dark:text-white"
                     placeholder="john@example.com"
                   />
                 </div>
               </div>
 
-              <div>
+              <div className="form-group">
                 <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Company/Organization
                 </label>
@@ -249,14 +257,14 @@ const ContactPage = () => {
                   name="company"
                   value={formData.company}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-colors text-gray-900 dark:text-white"
+                  className="w-full px-4 py-3 glass-effect rounded-xl input-focus-effect text-gray-900 dark:text-white"
                   placeholder="Your Company (Optional)"
                 />
               </div>
 
               {/* Project Details */}
               <div className="grid md:grid-cols-3 gap-6">
-                <div>
+                <div className="form-group">
                   <label htmlFor="projectType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Project Type *
                   </label>
@@ -266,7 +274,7 @@ const ContactPage = () => {
                     value={formData.projectType}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-colors text-gray-900 dark:text-white"
+                    className="w-full px-4 py-3 glass-effect rounded-xl input-focus-effect text-gray-900 dark:text-white"
                   >
                     <option value="">Select type</option>
                     {projectTypes.map((type) => (
@@ -274,7 +282,7 @@ const ContactPage = () => {
                     ))}
                   </select>
                 </div>
-                <div>
+                <div className="form-group">
                   <label htmlFor="budget" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Budget Range
                   </label>
@@ -283,7 +291,7 @@ const ContactPage = () => {
                     name="budget"
                     value={formData.budget}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-colors text-gray-900 dark:text-white"
+                    className="w-full px-4 py-3 glass-effect rounded-xl input-focus-effect text-gray-900 dark:text-white"
                   >
                     <option value="">Select budget</option>
                     {budgetRanges.map((range) => (
@@ -291,7 +299,7 @@ const ContactPage = () => {
                     ))}
                   </select>
                 </div>
-                <div>
+                <div className="form-group">
                   <label htmlFor="timeline" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Timeline
                   </label>
@@ -300,7 +308,7 @@ const ContactPage = () => {
                     name="timeline"
                     value={formData.timeline}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-colors text-gray-900 dark:text-white"
+                    className="w-full px-4 py-3 glass-effect rounded-xl input-focus-effect text-gray-900 dark:text-white"
                   >
                     <option value="">Select timeline</option>
                     {timelines.map((time) => (
@@ -310,7 +318,7 @@ const ContactPage = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="form-group">
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Project Description *
                 </label>
@@ -321,7 +329,7 @@ const ContactPage = () => {
                   onChange={handleInputChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-colors resize-none text-gray-900 dark:text-white"
+                  className="w-full px-4 py-3 glass-effect rounded-xl input-focus-effect resize-none text-gray-900 dark:text-white"
                   placeholder="Tell me about your project, goals, and any specific requirements..."
                 />
               </div>
@@ -329,18 +337,18 @@ const ContactPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-600 to-orange-600 text-white rounded-xl font-semibold hover:shadow-2xl hover:scale-105 transition-all duration-300 ${
+                className={`w-full btn-hover-effect flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-600 to-orange-600 text-white rounded-xl font-semibold ${
                   isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
                 }`}
               >
                 {isSubmitting ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full loading-spinner" />
                     Sending your message...
                   </>
                 ) : (
                   <>
-                    <Send className="w-5 h-5" />
+                    <Send className="w-5 h-5 animate-float" />
                     Send Project Details
                   </>
                 )}
@@ -350,11 +358,13 @@ const ContactPage = () => {
         </div>
 
         {/* Contact Info Sidebar */}
-        <div className="space-y-8">
+        <div className="space-y-8" id="sidebar" data-animate>
           {/* Contact Methods */}
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-3xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className={`glass-effect content-card rounded-3xl p-6 card-hover section-reveal ${
+            isVisible.sidebar ? 'visible' : ''
+          }`}>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
-              <MessageCircle className="text-pink-600 dark:text-pink-400" />
+              <MessageCircle className="text-pink-600 dark:text-pink-400 animate-pulse" />
               Get in Touch
             </h3>
 
@@ -367,9 +377,13 @@ const ContactPage = () => {
                     href={method.href}
                     target={method.href.startsWith('http') ? '_blank' : '_self'}
                     rel={method.href.startsWith('http') ? 'noopener noreferrer' : ''}
-                    className={`group flex items-center p-4 rounded-2xl bg-gradient-to-r ${method.color} ${method.hoverColor} text-white transition-all duration-300 hover:scale-105`}
+                    className={`group flex items-center p-4 rounded-2xl bg-gradient-to-r ${method.color} text-white btn-hover-effect animate-stagger`}
+                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mr-4">
+                    <div className="absolute top-2 right-2 text-2xl opacity-50 animate-float">
+                      {method.emoji}
+                    </div>
+                    <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mr-4 animate-pulse-glow">
                       <IconComponent className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
@@ -384,15 +398,21 @@ const ContactPage = () => {
           </div>
 
           {/* Availability */}
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-3xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className={`glass-effect content-card rounded-3xl p-6 card-hover section-reveal ${
+            isVisible.sidebar ? 'visible' : ''
+          }`} style={{ transitionDelay: '0.2s' }}>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
-              <Clock className="text-pink-600 dark:text-pink-400" />
+              <Clock className="text-pink-600 dark:text-pink-400 animate-rotate" style={{ animationDuration: '3s' }} />
               Availability
             </h3>
 
             <div className="space-y-3">
               {availability.map((slot, index) => (
-                <div key={index} className="flex items-center justify-between py-2">
+                <div 
+                  key={index} 
+                  className="flex items-center justify-between py-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg px-2 card-hover animate-stagger"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
                   <div>
                     <div className="font-medium text-gray-900 dark:text-white text-sm">
                       {slot.day}
@@ -413,119 +433,156 @@ const ContactPage = () => {
             </div>
 
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400 mb-3">
-                <MapPin className="w-4 h-4" />
-                <span className="text-sm">Remote / Global</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400 mb-3">
-                <Phone className="w-4 h-4" />
-                <span className="text-sm">Video calls available</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-                <Calendar className="w-4 h-4" />
-                <span className="text-sm">Usually responds within 24h</span>
-              </div>
+              {[
+                { icon: MapPin, text: portfolioData.personal.location, emoji: "🌍" },
+                { icon: Phone, text: "Video calls available", emoji: "📹" },
+                { icon: Calendar, text: `Usually responds within ${portfolioData.personal.availability.responseTime}`, emoji: "⚡" }
+              ].map((item, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center gap-3 text-gray-600 dark:text-gray-400 mb-3 card-hover animate-stagger"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <item.icon className="w-4 h-4 animate-float" />
+                  <span className="text-sm">{item.text}</span>
+                  <span className="ml-auto text-lg animate-pulse">{item.emoji}</span>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-3xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className={`glass-effect content-card rounded-3xl p-6 card-hover section-reveal ${
+            isVisible.sidebar ? 'visible' : ''
+          }`} style={{ transitionDelay: '0.4s' }}>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
               Quick Actions
             </h3>
 
             <div className="space-y-3">
-              <a
-                href={`mailto:${portfolioData.contact.email}?subject=Quick Question`}
-                className="flex items-center gap-3 p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-xl hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
-              >
-                <Mail className="w-5 h-5" />
-                <span className="font-medium">Quick Question</span>
-              </a>
-              
-              <a
-                href={`mailto:${portfolioData.contact.email}?subject=Schedule a Call`}
-                className="flex items-center gap-3 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-xl hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
-              >
-                <Video className="w-5 h-5" />
-                <span className="font-medium">Schedule a Call</span>
-              </a>
-              
-              <a
-                href={`mailto:${portfolioData.contact.email}?subject=Request Quote`}
-                className="flex items-center gap-3 p-3 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-xl hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors"
-              >
-                <Send className="w-5 h-5" />
-                <span className="font-medium">Request Quote</span>
-              </a>
+              {[
+                { 
+                  href: `mailto:${portfolioData.contact.email}?subject=Quick Question`,
+                  icon: Mail,
+                  text: "Quick Question",
+                  bg: "bg-blue-100 dark:bg-blue-900/30",
+                  text_color: "text-blue-700 dark:text-blue-300",
+                  emoji: "❓"
+                },
+                {
+                  href: `mailto:${portfolioData.contact.email}?subject=Schedule a Call`,
+                  icon: Video,
+                  text: "Schedule a Call",
+                  bg: "bg-green-100 dark:bg-green-900/30",
+                  text_color: "text-green-700 dark:text-green-300",
+                  emoji: "📞"
+                },
+                {
+                  href: `mailto:${portfolioData.contact.email}?subject=Request Quote`,
+                  icon: Send,
+                  text: "Request Quote",
+                  bg: "bg-purple-100 dark:bg-purple-900/30",
+                  text_color: "text-purple-700 dark:text-purple-300",
+                  emoji: "💰"
+                }
+              ].map((action, index) => (
+                <a
+                  key={index}
+                  href={action.href}
+                  className={`flex items-center gap-3 p-3 ${action.bg} ${action.text_color} rounded-xl btn-hover-effect animate-stagger relative overflow-hidden`}
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="absolute top-1 right-2 text-lg opacity-50 animate-float">
+                    {action.emoji}
+                  </div>
+                  <action.icon className="w-5 h-5 animate-pulse" />
+                  <span className="font-medium">{action.text}</span>
+                </a>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
       {/* FAQ Section */}
-      <section>
-        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
+      <section id="faq" data-animate>
+        <h2 className={`text-3xl font-bold text-center text-gray-900 dark:text-white mb-12 section-reveal ${
+          isVisible.faq ? 'visible' : ''
+        }`}>
           Frequently Asked Questions
+          <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto mt-4 rounded-full"></div>
         </h2>
         
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-              What's your typical project timeline?
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-              Project timelines vary based on complexity. Simple websites take 1-2 weeks, while complex web applications can take 2-6 months. I'll provide a detailed timeline after understanding your requirements.
-            </p>
-          </div>
-          
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-              Do you work with international clients?
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-              Absolutely! I work with clients globally and am comfortable with remote collaboration. I'm flexible with time zones and use modern communication tools for seamless project management.
-            </p>
-          </div>
-          
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-              What technologies do you specialize in?
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-              I specialize in React, Node.js, Python, and modern web technologies. I also work with cloud platforms like AWS and have experience with mobile development and UI/UX design.
-            </p>
-          </div>
-          
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-              How do you handle project communication?
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-              I provide regular updates through your preferred communication channel (email, Slack, etc.) and schedule weekly check-ins. You'll always know the project status and next steps.
-            </p>
-          </div>
+          {[
+            {
+              question: "What's your typical project timeline?",
+              answer: "Project timelines vary based on complexity. Simple websites take 1-2 weeks, while complex web applications can take 2-6 months. I'll provide a detailed timeline after understanding your requirements.",
+              emoji: "⏱️"
+            },
+            {
+              question: "Do you work with international clients?",
+              answer: "Absolutely! I work with clients globally and am comfortable with remote collaboration. I'm flexible with time zones and use modern communication tools for seamless project management.",
+              emoji: "🌍"
+            },
+            {
+              question: "What technologies do you specialize in?",
+              answer: "I specialize in React, Node.js, Python, and modern web technologies. I also work with cloud platforms like AWS and have experience with mobile development and UI/UX design.",
+              emoji: "⚛️"
+            },
+            {
+              question: "How do you handle project communication?",
+              answer: "I provide regular updates through your preferred communication channel (email, Slack, etc.) and schedule weekly check-ins. You'll always know the project status and next steps.",
+              emoji: "💬"
+            }
+          ].map((faq, index) => (
+            <div 
+              key={index}
+              className={`glass-effect content-card rounded-2xl p-6 card-hover animate-stagger ${
+                isVisible.faq ? 'section-reveal visible' : 'section-reveal'
+              }`}
+              style={{ transitionDelay: `${index * 0.1}s` }}
+            >
+              <div className="text-3xl mb-3 animate-float">{faq.emoji}</div>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                {faq.question}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                {faq.answer}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Footer CTA */}
-      <section className="text-center bg-gradient-to-r from-pink-600 to-orange-600 rounded-3xl p-12 text-white">
-        <h2 className="text-3xl font-bold mb-4">
-          Ready to Start Your Project?
-        </h2>
-        <p className="text-xl mb-8 text-white/90">
-          Let's turn your ideas into reality. I'm just one message away!
-        </p>
-        <a
-          href={`mailto:${portfolioData.contact.email}?subject=New Project Inquiry`}
-          className="inline-flex items-center gap-3 px-8 py-4 bg-white text-pink-600 rounded-xl font-semibold hover:shadow-2xl hover:scale-105 transition-all duration-300"
-        >
-          <Mail className="w-6 h-6" />
-          Send Me an Email
-        </a>
+      <section 
+        id="cta"
+        data-animate
+        className={`text-center bg-gradient-to-r from-pink-600 to-orange-600 rounded-3xl p-12 text-white relative overflow-hidden card-hover section-reveal ${
+          isVisible.cta ? 'visible' : ''
+        }`}
+      >
+        <div className="relative z-10">
+          <div className="text-6xl mb-4 animate-float">🚀</div>
+          <h2 className="text-3xl font-bold mb-4">
+            Ready to Start Your Project?
+          </h2>
+          <p className="text-xl mb-8 text-white/90">
+            Let's turn your ideas into reality. I'm just one message away!
+          </p>
+          <a
+            href={`mailto:${portfolioData.contact.email}?subject=New Project Inquiry`}
+            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-pink-600 rounded-xl font-semibold btn-hover-effect"
+          >
+            <Mail className="w-6 h-6 animate-float" />
+            Send Me an Email
+          </a>
+        </div>
       </section>
     </div>
   );
 };
 
 export default ContactPage;
+                    

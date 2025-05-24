@@ -1,30 +1,30 @@
-// utils/commands.js - Updated with new help command including navigation
 export const commands = {
   help: () => `Available commands:
 ╭─────────────────────────────────────────────────────────╮
 │  Navigation Commands:                                   │
-│  • home        - Go to home page                       │
-│  • about       - View about section                    │
-│  • projects    - View my projects                      │
-│  • contact     - View contact information              │
-│  • portfolio   - Switch to portfolio view              │
+│  • home        - Go to home page                        │
+│  • about       - View about section                     │
+│  • skills      - View technical skills & expertise      │
+│  • projects    - View my projects                       │
+│  • contact     - View contact information               │
+│  • portfolio   - Switch to portfolio view               │
 │                                                         │
 │  System Commands:                                       │
-│  • theme       - Toggle light/dark mode                │
-│  • clear       - Clear terminal history                │
-│  • close       - Close terminal                        │
-│  • minimize    - Minimize terminal                      │
-│  • maximize    - Toggle fullscreen                     │
+│  • theme       - Toggle light/dark mode                 │
+│  • clear       - Clear terminal history                 │
+│  • close       - Close terminal                         │
+│  • changeSize  - Change Size                            │
+│                                                         │
 │                                                         │
 │  Information Commands:                                  │
-│  • whoami      - Display user info                     │
-│  • skills      - Show technical skills                 │
-│  • experience  - Show work experience                  │
-│  • date        - Show current date                     │
+│  • whoami      - Display user info                      │
+│  • showSkills  - Show technical skills                  │
+│  • experience  - Show work experience                   │
+│  • date        - Show current date                      │
 │                                                         │
 │  Fun Commands:                                          │
-│  • matrix      - Enter the matrix... 🕶️               │
-│  • joke        - Tell a programming joke               │
+│  • matrix      - Enter the matrix...                    │
+│  • joke        - Tell a programming joke                │
 ╰─────────────────────────────────────────────────────────╯`,
 
   whoami: () => `User: visitor@portfolio.dev
@@ -33,14 +33,16 @@ Status: Exploring an awesome portfolio 😎
 Access Level: Guest (but welcome!)
 Location: Currently browsing from the terminal`,
 
-  skills: () => `Technical Skills:
+  showskills: () => `Technical Skills:
 ╭─────────────────────────────────────────────────────────╮
 │  Frontend: React, Vue.js, TypeScript, HTML5, CSS3      │
 │  Backend: Node.js, Python, Java, Express.js            │
 │  Database: MongoDB, PostgreSQL, MySQL                  │
 │  Tools: Git, Docker, AWS, VS Code                      │
 │  Other: REST APIs, GraphQL, Testing, CI/CD             │
-╰─────────────────────────────────────────────────────────╯`,
+╰─────────────────────────────────────────────────────────╯
+
+💡 Tip: Use the command 'skills' (navigation) to view the full Skills page with detailed information and interactive elements!`,
 
   experience: () => `Work Experience:
 ╭─────────────────────────────────────────────────────────╮

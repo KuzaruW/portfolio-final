@@ -15,7 +15,7 @@ const TerminalInput = ({
   // Default commands if not provided
   const defaultCommands = [
     'help', 'about', 'skills', 'projects', 'contact', 'clear', 'portfolio',
-    'home', 'theme', 'close', 'minimize', 'maximize'
+    'home', 'theme', 'close', 'showSkills', 'changeSize'
   ];
   
   const commands = availableCommands || defaultCommands;
@@ -139,7 +139,7 @@ const TerminalInput = ({
       {/* Command hint */}
       {input.trim() === '' && (
         <div className="mt-2 text-gray-500 text-xs">
-          💡 Try: "help" for commands, "home/about/projects/contact" for navigation, "theme" to toggle mode
+          💡 Try: "help" for commands, "home/about/projects/skills/contact" for navigation, "theme" to toggle mode
         </div>
       )}
     </div>

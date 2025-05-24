@@ -34,9 +34,7 @@ const Footer = ({ onNavigate }) => {
           setIsVisible(true);
         }
       },
-      {
-        threshold: 0.1
-      }
+      { threshold: 0.1 }
     );
 
     if (footerRef.current) {
@@ -51,59 +49,50 @@ const Footer = ({ onNavigate }) => {
   }, []);
 
   return (
-    <footer ref={footerRef} className="px-6 pt-16 pb-8 border-t border-gray-200 dark:border-gray-700 relative overflow-hidden">
+    <footer ref={footerRef} className="px-6 pt-16 pb-8 border-t border-gray-200 dark:border-gray-700 relative overflow-hidden no-print">
       {/* Background pattern */}
-      <div className="absolute inset-0 opacity-5 dark:opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'linear-gradient(45deg, rgba(59, 130, 246, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(59, 130, 246, 0.1) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(59, 130, 246, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(59, 130, 246, 0.1) 75%)',
-          backgroundSize: '20px 20px',
-          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
-        }}></div>
+      <div className="background-effects">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5 dark:opacity-10"></div>
       </div>
 
-      <div className="max-w-6xl mx-auto relative">
-        <div className={`grid md:grid-cols-3 gap-8 mb-8 transition-all duration-1000 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
+      <div className="max-w-6xl mx-auto page-content">
+        <div className={`grid md:grid-cols-3 gap-8 mb-8 section-reveal ${isVisible ? 'visible' : ''}`}>
           
           {/* Brand */}
           <div className="space-y-4">
             <div className="group">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300">
-                {portfolioData.name}
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 gradient-text-safe hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 transition-all duration-300">
+                {portfolioData.personal.name}
               </h3>
               <p className="text-gray-600 dark:text-gray-400 font-medium">
-                {portfolioData.title}
+                {portfolioData.personal.title}
               </p>
             </div>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-              Building innovative digital solutions with modern technologies and creative problem-solving.
+              {portfolioData.personal.bio.short}
             </p>
             
             {/* Animated status indicator */}
             <div className="flex items-center gap-2 text-sm">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-gray-600 dark:text-gray-400">Available for projects</span>
+              <span className="text-gray-600 dark:text-gray-400">
+                {portfolioData.personal.availability.status}
+              </span>
             </div>
           </div>
 
           {/* Quick Links */}
-          <div className={`transition-all duration-1000 delay-200 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}>
+          <div className={`section-reveal ${isVisible ? 'visible' : ''}`} style={{ transitionDelay: '0.2s' }}>
             <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
               Quick Links
             </h4>
             <div className="space-y-3">
-              {['about', 'projects', 'contact'].map((page, index) => (
+              {['about', 'skills', 'projects', 'contact'].map((page, index) => (
                 <button
                   key={page}
                   onClick={() => onNavigate(page)}
-                  className="block text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 capitalize hover:translate-x-1 hover:scale-105"
-                  style={{
-                    animationDelay: `${index * 0.1}s`,
-                    animation: isVisible ? 'slideInLeft 0.6s ease-out forwards' : 'none'
-                  }}
+                  className="block text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 btn-hover-effect capitalize animate-stagger"
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   {page}
                 </button>
@@ -112,18 +101,16 @@ const Footer = ({ onNavigate }) => {
           </div>
 
           {/* Contact Info */}
-          <div className={`transition-all duration-1000 delay-400 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}>
+          <div className={`section-reveal ${isVisible ? 'visible' : ''}`} style={{ transitionDelay: '0.4s' }}>
             <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
               Get In Touch
             </h4>
             <div className="space-y-4">
               <a
                 href={`mailto:${portfolioData.contact.email}`}
-                className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 hover:translate-x-1 group"
+                className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 btn-hover-effect"
               >
-                <Mail className="w-4 h-4 group-hover:animate-bounce" />
+                <Mail className="w-4 h-4 animate-float" />
                 <span className="text-sm">{portfolioData.contact.email}</span>
               </a>
               
@@ -136,14 +123,11 @@ const Footer = ({ onNavigate }) => {
                       href={social.href}
                       target={social.href.startsWith('http') ? '_blank' : '_self'}
                       rel={social.href.startsWith('http') ? 'noopener noreferrer' : ''}
-                      className={`p-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400 ${social.color} transition-all duration-300 hover:scale-110 hover:rotate-6 group`}
+                      className={`p-3 glass-effect rounded-lg text-gray-600 dark:text-gray-400 ${social.color} btn-hover-effect animate-stagger glow-on-hover`}
                       title={social.label}
-                      style={{
-                        animationDelay: `${index * 0.1}s`,
-                        animation: isVisible ? 'popIn 0.5s ease-out forwards' : 'none'
-                      }}
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <IconComponent className="w-4 h-4 group-hover:animate-pulse" />
+                      <IconComponent className="w-4 h-4 animate-pulse" />
                     </a>
                   );
                 })}
@@ -153,12 +137,10 @@ const Footer = ({ onNavigate }) => {
         </div>
 
         {/* Bottom Bar */}
-        <div className={`pt-8 border-t border-gray-200 dark:border-gray-700 text-center transition-all duration-1000 delay-600 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
+        <div className={`pt-8 border-t border-gray-200 dark:border-gray-700 text-center section-reveal ${isVisible ? 'visible' : ''}`} style={{ transitionDelay: '0.6s' }}>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-600 dark:text-gray-400 text-sm">
-              © 2024 {portfolioData.name}. All rights reserved.
+              © 2024 {portfolioData.personal.name}. All rights reserved.
             </p>
             
             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
